@@ -171,8 +171,10 @@ class FW_Extension_Megamenu extends FW_Extension
 		// nav-menu-template.php L405
 		// $args['items_wrap'] = '<ul id="%1$s" class="%2$s">%3$s</ul>';
 
-		$args['walker'] = new FW_Theme_Menu_Walker();
-		return $args;
+		// FIXME Just for making https://github.com/ThemeFuse/Unyson/issues/79 workable.
+		if ($args['theme_location'] == 'primary') {
+			$args['walker'] = new FW_Theme_Menu_Walker();
+		}
 	}
 
 	/**
