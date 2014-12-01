@@ -175,6 +175,8 @@ class FW_Extension_Megamenu extends FW_Extension
 		if ($args['theme_location'] == 'primary') {
 			$args['walker'] = new FW_Theme_Menu_Walker();
 		}
+
+		return $args;
 	}
 
 	/**
