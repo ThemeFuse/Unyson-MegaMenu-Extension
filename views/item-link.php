@@ -13,7 +13,10 @@ $megamenu = fw()->extensions->get('megamenu');
 
 if ($megamenu->show_icon()) {
 	if ($icon = fw_mega_menu_get_meta($item, 'icon')) {
-		$attributes['class'] = trim(@$attributes['class'] . " $icon");
+		if (empty($attributes['class'])) {
+			$attributes['class'] = '';
+		}
+		$attributes['class'] = trim($attributes['class'] . " $icon");
 	}
 }
 
