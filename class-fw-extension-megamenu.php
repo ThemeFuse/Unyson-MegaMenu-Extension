@@ -233,7 +233,7 @@ class FW_Extension_Megamenu extends FW_Extension
 	{
 		// <li>
 		//     {{ item_output }}
-		//     <p>{{ item.description }}</p>
+		//     <div>{{ item.description }}</div>
 		//     <div class="mega-menu">
 		//         <ul class="sub-menu"></ul>
 		//     </div>
@@ -243,8 +243,9 @@ class FW_Extension_Megamenu extends FW_Extension
 			$item_output = '';
 		}
 
-		if ($depth > 0 && $a = trim($item->description)) {
-			$item_output .= '<p>' . esc_html($a) . '</p>';
+		// Note that raw description is stored in post_content field.
+		if ($depth > 0 && trim($item->post_content)) {
+			$item_output .= '<div>' . $item->post_content . '</div>';
 		}
 
 		return $item_output;

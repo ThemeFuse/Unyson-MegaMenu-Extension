@@ -175,8 +175,9 @@ class FW_Admin_Menu_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_Edit: Fata
 <?php # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ?>
 				<p class="field-description description description-wide hide-if-mega-menu-column force-show-if-mega-menu-item">
 					<label for="edit-menu-item-description-<?php echo $item_id; ?>">
-						<?php _e( 'Description', 'fw' ); ?><br />
-						<textarea id="edit-menu-item-description-<?php echo $item_id; ?>" class="widefat edit-menu-item-description" rows="3" cols="20" name="menu-item-description[<?php echo $item_id; ?>]"><?php echo esc_html( $item->description ); // textarea_escaped ?></textarea>
+						<?php _e( 'Description (HTML)', 'fw' ); ?><br />
+						<?php /* Note that raw description is stored in post_content */ ?>
+						<textarea id="edit-menu-item-description-<?php echo $item_id; ?>" class="widefat edit-menu-item-description" rows="3" cols="20" name="menu-item-description[<?php echo $item_id; ?>]"><?php echo esc_html( $item->post_content ); // textarea_escaped ?></textarea>
 						<span class="description"><?php _e('The description will be displayed in the menu if the current theme supports it.', 'fw'); ?></span>
 					</label>
 				</p>
