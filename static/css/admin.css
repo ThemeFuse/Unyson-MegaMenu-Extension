@@ -84,6 +84,9 @@
 	        border-radius: 2px;
 }
 
+.mega-menu-icon-frame.inline-if-empty .fa {
+	color: #e1e1e1;
+}
 .mega-menu-icon-frame .fa:before {
 	display: inline-block;
 	width: 1em;
