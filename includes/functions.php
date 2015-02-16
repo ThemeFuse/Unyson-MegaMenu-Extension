@@ -39,7 +39,7 @@ function fw_mega_menu_request_meta($post)
 {
 	$post_id = is_object($post) ? $post->ID : $post;
 
-	return (array) @$_POST['mega-menu'][$post_id];
+	return (array)fw_akg('mega-menu/'. $post_id, $_POST);
 }
 
 function fw_mega_menu_get_meta($post, $key, $default = null)
