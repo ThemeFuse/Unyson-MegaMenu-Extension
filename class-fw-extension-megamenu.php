@@ -9,9 +9,13 @@ class FW_Extension_Megamenu extends FW_Extension
 
 	public function render($rel, $param = array())
 	{
-		echo $this->render_view($rel, $param);
+		$this->render_view($rel, $param, false);
 	}
 
+	/**
+	 * Check if menu icon is enabled (checked in Screen Options on admin Menus page)
+	 * @return bool
+	 */
 	public function show_icon()
 	{
 		return !in_array('icon', (array) get_user_option('manage' . 'nav-menus' . 'columnshidden'));
@@ -27,7 +31,6 @@ class FW_Extension_Megamenu extends FW_Extension
 			$this->add_admin_filters();
 		}
 		else {
-			$this->add_theme_actions();
 			$this->add_theme_filters();
 		}
 	}
@@ -42,11 +45,6 @@ class FW_Extension_Megamenu extends FW_Extension
 	{
 		add_filter('wp_edit_nav_menu_walker', array($this, '_admin_filter_wp_edit_nav_menu_walker'));
 		add_filter('manage_nav-menus_columns', array($this, '_admin_filter_manage_nav_menus_columns'), 20);
-	}
-
-	protected function add_theme_actions()
-	{
-		add_action('wp_enqueue_scripts', array($this, '_theme_action_wp_enqueue_scripts'));
 	}
 
 	protected function add_theme_filters()
@@ -121,14 +119,6 @@ class FW_Extension_Megamenu extends FW_Extension
 	{
 		$columns['icon'] = __('Icon', 'fw');
 		return $columns;
-	}
-
-	/**
-	 * @internal
-	 */
-	public function _theme_action_wp_enqueue_scripts()
-	{
-		wp_enqueue_style('fw-font-awesome');
 	}
 
 	/**
@@ -256,6 +246,6 @@ class FW_Extension_Megamenu extends FW_Extension
 	 */
 	public function _get_link()
 	{
-		return 'nav-menus.php';
+		return self_admin_url('nav-menus.php');
 	}
 }
