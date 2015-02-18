@@ -163,7 +163,7 @@ class FW_Admin_Menu_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_Edit: Fata
 					</label>
 					<label class="mega-menu-title-off-label">
 						<input type="checkbox" name="<?php echo fw_mega_menu_name_meta($item, 'title-off') ?>" <?php checked(fw_mega_menu_get_meta($item, 'title-off')) ?> class="mega-menu-title-off" />
-						Hide
+						<?php _e('Hide', 'fw') ?>
 					</label>
 				</p>
 				<p class="description description-wide show-if-mega-menu-column">
@@ -187,8 +187,8 @@ class FW_Admin_Menu_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_Edit: Fata
 					<label>
 						<?php _e('Icon', 'fw') ?><br />
 						<a href="#" class="button" data-action="mega-menu-pick-icon">
-							<span class="inline-if-empty">Add Icon</span>
-							<span class="hide-if-empty">Edit Icon</span>
+							<span class="inline-if-empty"><?php _e('Add Icon', 'fw') ?></span>
+							<span class="hide-if-empty"><?php _e('Edit Icon', 'fw') ?></span>
 						</a>&nbsp;
 						<span data-action="mega-menu-pick-icon" class="mega-menu-icon-frame hide-if-empty" style="position: relative;">
 							<i data-subject="mega-menu-icon-i"></i>
@@ -202,7 +202,7 @@ class FW_Admin_Menu_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_Edit: Fata
 				<p class="description description-wide show-if-menu-top">
 					<label>
 						<input type="checkbox" name="<?php echo fw_mega_menu_name_meta($item, 'enabled') ?>" <?php checked(fw_mega_menu_get_meta($item, 'enabled')) ?> class="mega-menu-enabled" />
-						Use as Mega Menu
+						<?php _e('Use as Mega Menu', 'fw') ?>
 					</label>
 				</p>
 				<p class="field-move hide-if-no-js description description-wide hide-if-mega-menu-column">
