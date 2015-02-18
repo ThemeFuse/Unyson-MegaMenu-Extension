@@ -170,7 +170,10 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 					}
 # END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 					//start the child delimiter
+# BEGIN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+					//$cb_args = array_merge( array(&$output, $depth), $args);
 					$cb_args = array_merge( array(&$output, $depth), $args, array($class));
+# END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 					call_user_func_array(array($this, 'start_lvl'), $cb_args);
 				}
 				$this->display_element( $child, $children_elements, $max_depth, $depth + 1, $args, $output );
