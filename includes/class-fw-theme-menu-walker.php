@@ -22,31 +22,31 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 		$classes[] = 'menu-item-' . $item->ID;
 
 		/**
-		 * Filter the CSS class(es) applied to a menu item's <li>.
+		 * Filter the CSS class(es) applied to a menu item's list item element.
 		 *
 		 * @since 3.0.0
+		 * @since 4.1.0 The `$depth` parameter was added.
 		 *
-		 * @see wp_nav_menu()
-		 *
-		 * @param array  $classes The CSS classes that are applied to the menu item's <li>.
+		 * @param array  $classes The CSS classes that are applied to the menu item's `<li>` element.
 		 * @param object $item    The current menu item.
-		 * @param array  $args    An array of wp_nav_menu() arguments.
+		 * @param array  $args    An array of {@see wp_nav_menu()} arguments.
+		 * @param int    $depth   Depth of menu item. Used for padding.
 		 */
-		$class_names = join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args ) );
+		$class_names = join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args, $depth ) );
 		$class_names = $class_names ? ' class="' . esc_attr( $class_names ) . '"' : '';
 
 		/**
-		 * Filter the ID applied to a menu item's <li>.
+		 * Filter the ID applied to a menu item's list item element.
 		 *
 		 * @since 3.0.1
+		 * @since 4.1.0 The `$depth` parameter was added.
 		 *
-		 * @see wp_nav_menu()
-		 *
-		 * @param string $menu_id The ID that is applied to the menu item's <li>.
+		 * @param string $menu_id The ID that is applied to the menu item's `<li>` element.
 		 * @param object $item    The current menu item.
-		 * @param array  $args    An array of wp_nav_menu() arguments.
+		 * @param array  $args    An array of {@see wp_nav_menu()} arguments.
+		 * @param int    $depth   Depth of menu item. Used for padding.
 		 */
-		$id = apply_filters( 'nav_menu_item_id', 'menu-item-'. $item->ID, $item, $args );
+		$id = apply_filters( 'nav_menu_item_id', 'menu-item-'. $item->ID, $item, $args, $depth );
 		$id = $id ? ' id="' . esc_attr( $id ) . '"' : '';
 
 		$output .= $indent . '<li' . $id . $class_names .'>';
@@ -58,24 +58,24 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 		$atts['href']   = ! empty( $item->url )        ? $item->url        : '';
 
 		/**
-		 * Filter the HTML attributes applied to a menu item's <a>.
+		 * Filter the HTML attributes applied to a menu item's anchor element.
 		 *
 		 * @since 3.6.0
-		 *
-		 * @see wp_nav_menu()
+		 * @since 4.1.0 The `$depth` parameter was added.
 		 *
 		 * @param array $atts {
-		 *     The HTML attributes applied to the menu item's <a>, empty strings are ignored.
+		 *     The HTML attributes applied to the menu item's `<a>` element, empty strings are ignored.
 		 *
 		 *     @type string $title  Title attribute.
 		 *     @type string $target Target attribute.
 		 *     @type string $rel    The rel attribute.
 		 *     @type string $href   The href attribute.
 		 * }
-		 * @param object $item The current menu item.
-		 * @param array  $args An array of wp_nav_menu() arguments.
+		 * @param object $item  The current menu item.
+		 * @param array  $args  An array of {@see wp_nav_menu()} arguments.
+		 * @param int    $depth Depth of menu item. Used for padding.
 		 */
-		$atts = apply_filters( 'nav_menu_link_attributes', $atts, $item, $args );
+		$atts = apply_filters( 'nav_menu_link_attributes', $atts, $item, $args, $depth );
 
 		$attributes = '';
 		foreach ( $atts as $attr => $value ) {
