@@ -153,26 +153,47 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 					$newlevel = true;
 # BEGIN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 					if (!isset($mega_menu_container) && $depth == 0 && fw_ext_mega_menu_get_meta($id, 'enabled')) {
-						$mega_menu_container = true;
-						$output .= '<div class="mega-menu">';
+						$mega_menu_container = apply_filters('fw_ext_mega_menu_container', array(
+							'tag'  => 'div',
+							'attr' => array( 'class' => 'mega-menu' )
+						), array(
+							'element' => $element,
+							'children_elements' => $children_elements,
+							'max_depth' => $max_depth,
+							'depth' => $depth,
+							'args' => $args,
+						));
+						$output .= '<'. $mega_menu_container['tag'] .' '. fw_attr_to_html($mega_menu_container['attr']) .'>';
 					}
-					$class = 'sub-menu';
+
+					$classes = array('sub-menu' => true);
 					if (isset($mega_menu_container)) {
 						if ($this->row_has_icons($element, $child, $children_elements)) {
-							$class .= ' sub-menu-has-icons';
+							$classes['sub-menu-has-icons'] = true;
 						}
-						$class .= ' mega-menu-row';
+						$classes['mega-menu-row'] = true;;
 					}
 					else {
 						if ($this->sub_menu_has_icons($element, $children_elements)) {
-							$class .= ' sub-menu-has-icons';
+							$classes['sub-menu-has-icons'] = true;
 						}
 					}
+					$classes = apply_filters('fw_ext_mega_menu_start_lvl_classes', $classes, array(
+						'element' => $element,
+						'children_elements' => $children_elements,
+						'max_depth' => $max_depth,
+						'depth' => $depth,
+						'args' => $args,
+						'mega_menu_container' => isset($mega_menu_container) ? $mega_menu_container : false
+					));
+					$classes = array_filter($classes);
 # END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 					//start the child delimiter
 # BEGIN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 					//$cb_args = array_merge( array(&$output, $depth), $args);
-					$cb_args = array_merge( array(&$output, $depth), $args, array($class));
+					$cb_args = array_merge( array(&$output, $depth), $args, array(
+						implode(' ', array_keys($classes))
+					));
 # END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 					call_user_func_array(array($this, 'start_lvl'), $cb_args);
 				}
@@ -189,7 +210,7 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 
 # BEGIN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		if (isset($mega_menu_container)) {
-			$output .= '</div>';
+			$output .= '</'. $mega_menu_container['tag'] .'>';
 		}
 # END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		//end this element
