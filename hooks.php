@@ -43,10 +43,7 @@ function _filter_fw_ext_mega_menu_wp_nav_menu_args($args) {
 	// nav-menu-template.php L405
 	// $args['items_wrap'] = '<ul id="%1$s" class="%2$s">%3$s</ul>';
 
-	// FIXME Just for making https://github.com/ThemeFuse/Unyson/issues/79 workable.
-	if ($args['theme_location'] == 'primary') {
-		$args['walker'] = new FW_Theme_Menu_Walker();
-	}
+	$args['walker'] = new FW_Theme_Menu_Walker();
 
 	return $args;
 }
