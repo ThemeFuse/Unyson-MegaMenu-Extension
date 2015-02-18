@@ -18,6 +18,10 @@
 	display: block;
 }
 
+.menu-item .menu-item-settings {
+	background-color: #fff;
+}
+
 /* Mega Menu */
 
 .show-if-mega-menu-top,
