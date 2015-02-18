@@ -94,21 +94,17 @@
 }
 .mega-menu-icon-frame .fa:before {
 	display: inline-block;
-	width: 1em;
 	text-align: center;
 }
 
 .mega-menu-icon-remove {
 	font-size: 14px !important;
-	position: absolute;
-	top: -7px;
-	right: -7px;
-	display: inline-block;
-	width: 13px;
-	height: auto;
 	line-height: 13px;
-	overflow: hidden;
-	background: white;
+	position: absolute;
+	top: -10px;
+	right: -11px;
+	display: inline-block;
+	height: auto;
 	border: none;
 	-webkit-transition: none;
 	transition: none;
@@ -117,6 +113,11 @@
 .mega-menu-icon-remove:hover {
 	-webkit-transition: none;
 	transition: none;
+}
+
+.mega-menu-icon-remove:before {
+	background-color: #fff;
+	border-radius: 99px;
 }
 
 /* Mega Menu Column Options: title and checkbox */
