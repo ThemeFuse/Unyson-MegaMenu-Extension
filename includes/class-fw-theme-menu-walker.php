@@ -116,20 +116,25 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 		$output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
 	}
 
+	/**
+	 * @see Walker::display_element
+	 */
 	function display_element( $element, &$children_elements, $max_depth, $depth, $args, &$output ) {
 
 		if ( !$element )
 			return;
 
 		$id_field = $this->db_fields['id'];
+		$id       = $element->$id_field;
 
 		//display this element
-		if ( isset( $args[0] ) && is_array( $args[0] ) )
-			$args[0]['has_children'] = ! empty( $children_elements[$element->$id_field] );
+		$this->has_children = ! empty( $children_elements[ $id ] );
+		if ( isset( $args[0] ) && is_array( $args[0] ) ) {
+			$args[0]['has_children'] = $this->has_children; // Backwards compatibility.
+		}
+
 		$cb_args = array_merge( array(&$output, $element, $depth), $args);
 		call_user_func_array(array($this, 'start_el'), $cb_args);
-
-		$id = $element->$id_field;
 
 		// descend only when the depth is right and there are childrens for this element
 		if ( ($max_depth == 0 || $max_depth > $depth+1 ) && isset( $children_elements[$id]) ) {
@@ -194,7 +199,7 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 		$output .= "\n$indent<ul class=\"$class\">\n";
 	}
 
-	private function sub_menu_has_icons($element, $children_elements) {
+	protected function sub_menu_has_icons($element, $children_elements) {
 		$id_field = $this->db_fields['id'];
 		$id = $element->$id_field;
 		foreach ($children_elements[$id] as $child) {
@@ -205,7 +210,7 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 		return false;
 	}
 
-	private function row_has_icons($row, $first_column, $children_elements) {
+	protected function row_has_icons($row, $first_column, $children_elements) {
 
 		$id_field = $this->db_fields['id'];
 		$row_id = $row->$id_field;
@@ -236,7 +241,7 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 	/**
 	 * @return FW_Extension_Megamenu
 	 */
-	private function megamenu()
+	protected function megamenu()
 	{
 		return fw()->extensions->get('megamenu');
 	}
