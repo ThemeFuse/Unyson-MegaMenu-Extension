@@ -96,7 +96,7 @@ class FW_Extension_Megamenu extends FW_Extension
 	{
 		$flags = array('enabled', 'title-off', 'new-row');
 
-		$meta = fw_mega_menu_request_meta($menu_item_db_id);
+		$meta = _fw_mega_menu_admin_input_POST_values($menu_item_db_id);
 		foreach ($flags as $flag) {
 			$meta[$flag] = isset($meta[$flag]);
 		}

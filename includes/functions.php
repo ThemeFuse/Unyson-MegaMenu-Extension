@@ -2,9 +2,13 @@
 
 /**
  * @internal
+ * @param $post
+ * @param $key
+ * @param null $default
+ * @param bool $write
+ * @return mixed
  */
-function _fw_mega_menu_meta($post, $key, $default = null, $write = false)
-{
+function _fw_mega_menu_meta($post, $key, $default = null, $write = false) {
 	static $meta = array();
 
 	$post_id = is_object($post) ? $post->ID : $post;
@@ -28,26 +32,25 @@ function _fw_mega_menu_meta($post, $key, $default = null, $write = false)
 	return isset($meta[$post_id][$key]) ? $meta[$post_id][$key] : $default;
 }
 
-function fw_mega_menu_name_meta($post, $key)
-{
+/**
+ * @param $post
+ * @param $key
+ * @return string
+ * @internal
+ */
+function _fw_mega_menu_admin_input_name($post, $key) {
 	$post_id = is_object($post) ? $post->ID : $post;
 
 	return "mega-menu[$post_id][$key]";
 }
 
-function fw_mega_menu_request_meta($post)
-{
+/**
+ * @param $post
+ * @return array
+ * @internal
+ */
+function _fw_mega_menu_admin_input_POST_values($post) {
 	$post_id = is_object($post) ? $post->ID : $post;
 
 	return (array)fw_akg('mega-menu/'. $post_id, $_POST);
-}
-
-function fw_mega_menu_get_meta($post, $key, $default = null)
-{
-	return _fw_mega_menu_meta($post, $key, $default);
-}
-
-function fw_mega_menu_update_meta($post, array $array)
-{
-	return _fw_mega_menu_meta($post, $array, null, true);
 }
