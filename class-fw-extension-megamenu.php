@@ -96,12 +96,12 @@ class FW_Extension_Megamenu extends FW_Extension
 	{
 		$flags = array('enabled', 'title-off', 'new-row');
 
-		$meta = _fw_mega_menu_admin_input_POST_values($menu_item_db_id);
+		$meta = _fw_ext_mega_menu_admin_input_POST_values($menu_item_db_id);
 		foreach ($flags as $flag) {
 			$meta[$flag] = isset($meta[$flag]);
 		}
 
-		fw_mega_menu_update_meta($menu_item_db_id, $meta);
+		fw_ext_mega_menu_update_meta($menu_item_db_id, $meta);
 	}
 
 	/**
@@ -180,7 +180,7 @@ class FW_Extension_Megamenu extends FW_Extension
 
 		$mega_menu = array();
 		foreach ($sorted_menu_items as $item) {
-			if ($item->menu_item_parent == 0 && fw_mega_menu_get_meta($item, 'enabled')) {
+			if ($item->menu_item_parent == 0 && fw_ext_mega_menu_get_meta($item, 'enabled')) {
 				$mega_menu[$item->ID] = true;
 			}
 		}
@@ -192,7 +192,7 @@ class FW_Extension_Megamenu extends FW_Extension
 			if (isset($mega_menu[$item->menu_item_parent])) {
 				$item->classes[] = 'mega-menu-col';
 			}
-			if (fw_mega_menu_get_meta($item, 'icon')) {
+			if (fw_ext_mega_menu_get_meta($item, 'icon')) {
 				$item->classes[] = 'menu-item-has-icon';
 			}
 		}
@@ -229,7 +229,7 @@ class FW_Extension_Megamenu extends FW_Extension
 		//     </div>
 		// </li>
 
-		if ($depth > 0 && fw_mega_menu_get_meta($item, 'title-off')) {
+		if ($depth > 0 && fw_ext_mega_menu_get_meta($item, 'title-off')) {
 			$item_output = '';
 		}
 

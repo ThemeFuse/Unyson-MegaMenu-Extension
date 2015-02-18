@@ -162,13 +162,13 @@ class FW_Admin_Menu_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_Edit: Fata
 						<input type="text" name="menu-item-title[<?php echo $item_id ?>]" value="<?php echo esc_attr($item->title) ?>" class="widefat mega-menu-title" />
 					</label>
 					<label class="mega-menu-title-off-label">
-						<input type="checkbox" name="<?php echo _fw_mega_menu_admin_input_name($item, 'title-off') ?>" <?php checked(fw_mega_menu_get_meta($item, 'title-off')) ?> class="mega-menu-title-off" />
+						<input type="checkbox" name="<?php echo _fw_ext_mega_menu_admin_input_name($item, 'title-off') ?>" <?php checked(fw_ext_mega_menu_get_meta($item, 'title-off')) ?> class="mega-menu-title-off" />
 						<?php _e('Hide', 'fw') ?>
 					</label>
 				</p>
 				<p class="description description-wide show-if-mega-menu-column">
 					<label>
-						<input type="checkbox" name="<?php echo _fw_mega_menu_admin_input_name($item, 'new-row') ?>" <?php checked(fw_mega_menu_get_meta($item, 'new-row')) ?> class="mega-menu-column-new-row" />
+						<input type="checkbox" name="<?php echo _fw_ext_mega_menu_admin_input_name($item, 'new-row') ?>" <?php checked(fw_ext_mega_menu_get_meta($item, 'new-row')) ?> class="mega-menu-column-new-row" />
 						<?php _e('This column should start a new row', 'fw') ?>
 					</label>
 				</p>
@@ -195,13 +195,13 @@ class FW_Admin_Menu_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_Edit: Fata
 							<a href="#" class="mega-menu-icon-remove dashicons fw-x" data-action="mega-menu-remove-icon" title="Remove Icon">&#xf153;</a>
 						</span>
 						<span class="mega-menu-icon-frame inline-if-empty" data-action="mega-menu-pick-icon"><i class="fa fa-lg fa-eye" style="position: relative; top: -1px;"></i></span>
-						<input type="hidden" name="<?php echo _fw_mega_menu_admin_input_name($item, 'icon') ?>" value="<?php echo esc_attr(fw_mega_menu_get_meta($item, 'icon')) ?>" data-subject="mega-menu-icon-input" />
+						<input type="hidden" name="<?php echo _fw_ext_mega_menu_admin_input_name($item, 'icon') ?>" value="<?php echo esc_attr(fw_ext_mega_menu_get_meta($item, 'icon')) ?>" data-subject="mega-menu-icon-input" />
 					</label>
 				</p>
 <?php # Use as Mega Menu ?>
 				<p class="description description-wide show-if-menu-top">
 					<label>
-						<input type="checkbox" name="<?php echo _fw_mega_menu_admin_input_name($item, 'enabled') ?>" <?php checked(fw_mega_menu_get_meta($item, 'enabled')) ?> class="mega-menu-enabled" />
+						<input type="checkbox" name="<?php echo _fw_ext_mega_menu_admin_input_name($item, 'enabled') ?>" <?php checked(fw_ext_mega_menu_get_meta($item, 'enabled')) ?> class="mega-menu-enabled" />
 						<?php _e('Use as Mega Menu', 'fw') ?>
 					</label>
 				</p>

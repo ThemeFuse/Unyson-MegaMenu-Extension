@@ -136,7 +136,7 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 
 			foreach( $children_elements[ $id ] as $child ){
 # BEGIN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-				if ($depth == 0 && fw_mega_menu_get_meta($id, 'enabled') && fw_mega_menu_get_meta($child, 'new-row')) {
+				if ($depth == 0 && fw_ext_mega_menu_get_meta($id, 'enabled') && fw_ext_mega_menu_get_meta($child, 'new-row')) {
 					if (isset($newlevel) && $newlevel) {
 						$cb_args = array_merge( array(&$output, $depth), $args);
 						call_user_func_array(array($this, 'end_lvl'), $cb_args);
@@ -147,7 +147,7 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 				if ( !isset($newlevel) ) {
 					$newlevel = true;
 # BEGIN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-					if (!isset($mega_menu_container) && $depth == 0 && fw_mega_menu_get_meta($id, 'enabled')) {
+					if (!isset($mega_menu_container) && $depth == 0 && fw_ext_mega_menu_get_meta($id, 'enabled')) {
 						$mega_menu_container = true;
 						$output .= '<div class="mega-menu">';
 					}
@@ -198,7 +198,7 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 		$id_field = $this->db_fields['id'];
 		$id = $element->$id_field;
 		foreach ($children_elements[$id] as $child) {
-			if (fw_mega_menu_get_meta($child, 'icon')) {
+			if (fw_ext_mega_menu_get_meta($child, 'icon')) {
 				return true;
 			}
 		}
@@ -221,11 +221,11 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 
 		// scan row
 		while (true) {
-			if (fw_mega_menu_get_meta($child, 'icon')) {
+			if (fw_ext_mega_menu_get_meta($child, 'icon')) {
 				return true;
 			}
 			$child = next($children_elements[$row_id]);
-			if ($child === false || fw_mega_menu_get_meta($child, 'new-row')) {
+			if ($child === false || fw_ext_mega_menu_get_meta($child, 'new-row')) {
 				break;
 			}
 		}

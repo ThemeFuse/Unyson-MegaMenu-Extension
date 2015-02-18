@@ -8,7 +8,7 @@
  * @param bool $write
  * @return mixed
  */
-function _fw_mega_menu_meta($post, $key, $default = null, $write = false) {
+function _fw_ext_mega_menu_meta($post, $key, $default = null, $write = false) {
 	static $meta = array();
 
 	$post_id = is_object($post) ? $post->ID : $post;
@@ -38,7 +38,7 @@ function _fw_mega_menu_meta($post, $key, $default = null, $write = false) {
  * @return string
  * @internal
  */
-function _fw_mega_menu_admin_input_name($post, $key) {
+function _fw_ext_mega_menu_admin_input_name($post, $key) {
 	$post_id = is_object($post) ? $post->ID : $post;
 
 	return "mega-menu[$post_id][$key]";
@@ -49,7 +49,7 @@ function _fw_mega_menu_admin_input_name($post, $key) {
  * @return array
  * @internal
  */
-function _fw_mega_menu_admin_input_POST_values($post) {
+function _fw_ext_mega_menu_admin_input_POST_values($post) {
 	$post_id = is_object($post) ? $post->ID : $post;
 
 	return (array)fw_akg('mega-menu/'. $post_id, $_POST);
