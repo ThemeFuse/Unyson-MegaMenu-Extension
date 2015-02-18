@@ -97,7 +97,7 @@ class FW_Extension_Megamenu extends FW_Extension
 	 */
 	public function _admin_filter_wp_edit_nav_menu_walker()
 	{
-		return 'FW_Admin_Menu_Walker';
+		return 'FW_Ext_Mega_Menu_Admin_Walker';
 	}
 
 	/**

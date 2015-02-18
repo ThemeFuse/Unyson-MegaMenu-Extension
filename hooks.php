@@ -1,22 +1,6 @@
 <?php if (!defined('FW')) die('Forbidden');
 
 /**
- * Just for removing FW_Theme_Menu_Walker set in the previous
- * filter when the fallback menu is in action.
- * @param array $args
- * @return array
- * @internal
- */
-function _filter_fw_ext_mega_menu_wp_page_menu_args($args) {
-	if ($args['walker'] instanceof FW_Theme_Menu_Walker) {
-		$args['walker'] = '';
-	}
-
-	return $args;
-}
-add_filter('wp_page_menu_args', '_filter_fw_ext_mega_menu_wp_page_menu_args');
-
-/**
  * @param array $args
  * @return array
  * @internal
@@ -43,11 +27,27 @@ function _filter_fw_ext_mega_menu_wp_nav_menu_args($args) {
 	// nav-menu-template.php L405
 	// $args['items_wrap'] = '<ul id="%1$s" class="%2$s">%3$s</ul>';
 
-	$args['walker'] = new FW_Theme_Menu_Walker();
+	$args['walker'] = new FW_Ext_Mega_Menu_Walker();
 
 	return $args;
 }
 add_filter('wp_nav_menu_args', '_filter_fw_ext_mega_menu_wp_nav_menu_args');
+
+/**
+ * Just for removing FW_Ext_Mega_Menu_Walker set in the previous
+ * filter when the fallback menu is in action.
+ * @param array $args
+ * @return array
+ * @internal
+ */
+function _filter_fw_ext_mega_menu_wp_page_menu_args($args) {
+	if ($args['walker'] instanceof FW_Ext_Mega_Menu_Walker) {
+		$args['walker'] = '';
+	}
+
+	return $args;
+}
+add_filter('wp_page_menu_args', '_filter_fw_ext_mega_menu_wp_page_menu_args');
 
 /**
  * @param [WP_Post] $sorted_menu_items

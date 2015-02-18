@@ -1,6 +1,6 @@
 <?php if (!defined('FW')) die('Forbidden');
 
-class FW_Admin_Menu_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_Edit: Fatal Error: Class Not Found */
+class FW_Ext_Mega_Menu_Admin_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_Edit: Fatal Error: Class Not Found */
 {
 	function start_lvl( &$output, $depth = 0, $args = array() ) {}
 	function end_lvl( &$output, $depth = 0, $args = array() ) {}
@@ -251,3 +251,8 @@ class FW_Admin_Menu_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_Edit: Fata
 		$output .= ob_get_clean();
 	}
 }
+
+/**
+ * @deprecated
+ */
+class FW_Admin_Menu_Walker extends FW_Ext_Mega_Menu_Admin_Walker {}

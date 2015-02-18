@@ -1,6 +1,6 @@
 <?php if (!defined('FW')) die('Forbidden');
 
-class FW_Theme_Menu_Walker extends Walker_Nav_Menu
+class FW_Ext_Mega_Menu_Walker extends Walker_Nav_Menu
 {
 	/**
 	 * Start the element output.
@@ -270,3 +270,8 @@ class FW_Theme_Menu_Walker extends Walker_Nav_Menu
 		return fw()->extensions->get('megamenu');
 	}
 }
+
+/**
+ * @deprecated
+ */
+class FW_Theme_Menu_Walker extends FW_Ext_Mega_Menu_Walker {}
