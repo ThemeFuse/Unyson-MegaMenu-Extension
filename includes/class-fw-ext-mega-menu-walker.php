@@ -94,7 +94,7 @@ class FW_Ext_Mega_Menu_Walker extends Walker_Nav_Menu
 		// $item_output .= $args->after;
 		$title = apply_filters('the_title', $item->title, $item->ID);
 		$attributes = array_filter($atts);
-		$item_output = $this->megamenu()->render_str('item-link', compact('item', 'attributes', 'title', 'args', 'depth'));
+		$item_output = fw_ext('megamenu')->render_str('item-link', compact('item', 'attributes', 'title', 'args', 'depth'));
 # END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 		/**
@@ -168,13 +168,13 @@ class FW_Ext_Mega_Menu_Walker extends Walker_Nav_Menu
 
 					$classes = array('sub-menu' => true);
 					if (isset($mega_menu_container)) {
-						if ($this->row_has_icons($element, $child, $children_elements)) {
+						if ($this->row_contains_icons($element, $child, $children_elements)) {
 							$classes['sub-menu-has-icons'] = true;
 						}
 						$classes['mega-menu-row'] = true;;
 					}
 					else {
-						if ($this->sub_menu_has_icons($element, $children_elements)) {
+						if ($this->sub_menu_contains_icons($element, $children_elements)) {
 							$classes['sub-menu-has-icons'] = true;
 						}
 					}
@@ -223,7 +223,7 @@ class FW_Ext_Mega_Menu_Walker extends Walker_Nav_Menu
 		$output .= "\n$indent<ul class=\"$class\">\n";
 	}
 
-	protected function sub_menu_has_icons($element, $children_elements) {
+	protected function sub_menu_contains_icons($element, $children_elements) {
 		$id_field = $this->db_fields['id'];
 		$id = $element->$id_field;
 		foreach ($children_elements[$id] as $child) {
@@ -234,7 +234,7 @@ class FW_Ext_Mega_Menu_Walker extends Walker_Nav_Menu
 		return false;
 	}
 
-	protected function row_has_icons($row, $first_column, $children_elements) {
+	protected function row_contains_icons($row, $first_column, $children_elements) {
 
 		$id_field = $this->db_fields['id'];
 		$row_id = $row->$id_field;
@@ -261,17 +261,24 @@ class FW_Ext_Mega_Menu_Walker extends Walker_Nav_Menu
 
 		return false;
 	}
-
-	/**
-	 * @return FW_Extension_Megamenu
-	 */
-	protected function megamenu()
-	{
-		return fw()->extensions->get('megamenu');
-	}
 }
 
 /**
  * @deprecated
  */
-class FW_Theme_Menu_Walker extends FW_Ext_Mega_Menu_Walker {}
+class FW_Theme_Menu_Walker extends FW_Ext_Mega_Menu_Walker {
+
+	/**
+	 * @deprecated
+	 */
+	private function sub_menu_has_icons($element, $children_elements) {
+		return $this->sub_menu_contains_icons($element, $children_elements);
+	}
+
+	/**
+	 * @deprecated
+	 */
+	private function row_has_icons($row, $first_column, $children_elements) {
+		return $this->row_contains_icons($row, $first_column, $children_elements);
+	}
+}
