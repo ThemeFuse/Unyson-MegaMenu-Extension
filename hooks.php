@@ -84,23 +84,6 @@ function _filter_fw_ext_mega_menu_wp_nav_menu_objects($sorted_menu_items, $args)
 add_filter('wp_nav_menu_objects', '_filter_fw_ext_mega_menu_wp_nav_menu_objects', 10, 2);
 
 /**
- * nav-menu-template.php L141
- * Walker_Nav_Menu::start_el
- *
- * @param $attr
- * @param $item
- * @param $args
- * @return mixed
- * @internal
- */
-function _filter_fw_ext_mega_menu_nav_menu_link_attributes($attr, $item, $args) {
-	// item_output = {{before}}<a {{ attr }}>{{ link_before }}{% the_title %}{{ link_after }}</a>{{ after }}
-
-	return $attr;
-}
-add_filter('nav_menu_link_attributes', '_filter_fw_ext_mega_menu_nav_menu_link_attributes', 10, 3);
-
-/**
  * nav-menu-template.php L174
  * Walker_Nav_Menu::start_el
  *
@@ -112,6 +95,10 @@ add_filter('nav_menu_link_attributes', '_filter_fw_ext_mega_menu_nav_menu_link_a
  * @internal
  */
 function _filter_fw_ext_mega_menu_walker_nav_menu_start_el($item_output, $item, $depth, $args) {
+	if (!fw_ext_mega_menu_is_mm_item($item)) {
+		return $item_output;
+	}
+
 	// <li>
 	//     {{ item_output }}
 	//     <div>{{ item.description }}</div>
