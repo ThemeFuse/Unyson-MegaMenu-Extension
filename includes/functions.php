@@ -2,7 +2,7 @@
 
 /**
  * @internal
- * @param $post
+ * @param int|object $post
  * @param $key
  * @param null $default
  * @param bool $write
