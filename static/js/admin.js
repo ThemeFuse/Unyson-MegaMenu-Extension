@@ -4,7 +4,9 @@ jQuery(function ($) {
 	(function () {
 
 		var container = '#menu-to-edit';
-		var selector = '#icon-hide';
+		var selector = jQuery('body.branch-4-0, body.branch-4-1, body.branch-4-2, body.branch-4-3').length
+			? '#icon-hide' // WP <= 4.3
+			: '.hide-column-tog[name="icon-hide"]'; // WP 4.4+
 
 		$(document).on('change', selector, function () {
 			$(container).toggleClass('screen-options-icon', $(this).is(':checked'));
