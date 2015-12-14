@@ -6,7 +6,7 @@ $manifest = array();
 
 $manifest['name']        = __( 'Mega Menu', 'fw' );
 $manifest['description'] = __( 'The Mega Menu extension adds a user-friendly drop down menu that will let you easily create highly customized menu configurations.', 'fw' );
-$manifest['version'] = '1.0.6';
+$manifest['version'] = '1.0.7';
 $manifest['display'] = true;
 $manifest['standalone'] = true;
 
