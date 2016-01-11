@@ -65,13 +65,13 @@ class FW_Extension_Megamenu extends FW_Extension
 				"fw-ext-{$this->get_name()}-admin",
 				$this->get_uri('/static/css/admin.css'),
 				array(),
-				fw()->manifest->get_version()
+				$this->manifest->get_version()
 			);
 			wp_enqueue_script(
 				"fw-ext-{$this->get_name()}-admin",
 				$this->get_uri('/static/js/admin.js'),
 				array('fw'),
-				fw()->manifest->get_version()
+				$this->manifest->get_version()
 			);
 			wp_localize_script(
 				"fw-ext-{$this->get_name()}-admin",
