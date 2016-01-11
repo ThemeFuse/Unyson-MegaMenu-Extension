@@ -51,28 +51,35 @@ class FW_Extension_Megamenu extends FW_Extension
 	{
 		if ($hook == 'nav-menus.php') {
 
+			// Enqueue all the necessary files for Icon dialog
+			$options = array(
+				'icon' => apply_filters('fw:ext:megamenu:icon-option', array(
+					'type' => 'icon',
+					'label' => __('Select Icon', 'fw'),
+				)),
+			);
+			fw()->backend->enqueue_options_static($options);
+
 			wp_enqueue_media();
 			wp_enqueue_style(
 				"fw-ext-{$this->get_name()}-admin",
-				$this->get_declared_URI('/static/css/admin.css'),
+				$this->get_uri('/static/css/admin.css'),
 				array(),
 				fw()->manifest->get_version()
 			);
 			wp_enqueue_script(
 				"fw-ext-{$this->get_name()}-admin",
-				$this->get_declared_URI('/static/js/admin.js'),
+				$this->get_uri('/static/js/admin.js'),
 				array('fw'),
 				fw()->manifest->get_version()
 			);
-
-			// Enqueue all the necessary files for Icon dialog
-			$options = array(
-				'hello' => array(
-					'type' => 'icon',
-					'label' => __('Select Icon', 'fw'),
-				),
+			wp_localize_script(
+				"fw-ext-{$this->get_name()}-admin",
+				'_fw_ext_megamenu',
+				array(
+					'icon_option' => $options['icon']
+				)
 			);
-			fw()->backend->enqueue_options_static($options);
 
 		}
 	}

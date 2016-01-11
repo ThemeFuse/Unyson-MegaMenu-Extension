@@ -1,5 +1,7 @@
 jQuery(function ($) {
 
+	var localized = _fw_ext_megamenu;
+
 	// Screen Options: Show advanced menu properties: Icon Checkbox
 	(function () {
 
@@ -82,12 +84,9 @@ jQuery(function ($) {
 		event.preventDefault();
 
 		var modal = new fw.OptionsModal({
-			title: 'Select Icon',
+			title: localized.icon_option.label,
 			options: [{
-				icon: {
-					type: 'icon',
-					label: 'Select Icon'
-				}
+				icon: localized.icon_option
 			}],
 			values: {
 				icon: $(event.target).closest('.field-mega-menu-icon').find('input').val()
