@@ -89,15 +89,19 @@
 	        border-radius: 2px;
 }
 
-.mega-menu-icon-frame .fa {
+.mega-menu-icon-frame .mega-menu-icon-i {
 	text-align: center;
 	min-width: 1em;
+	font-size: 1.33333333em;
+	line-height: .75em;
+	vertical-align: -15%;
 }
 
+.mega-menu-icon-frame.inline-if-empty .mega-menu-icon-i,
 .mega-menu-icon-frame.inline-if-empty .fa {
 	color: #e1e1e1;
 }
-.mega-menu-icon-frame .fa:before {
+.mega-menu-icon-frame .mega-menu-icon-i:before {
 	display: inline-block;
 }
 

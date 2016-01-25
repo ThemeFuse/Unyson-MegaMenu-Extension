@@ -72,7 +72,7 @@ jQuery(function ($) {
 			var field = $(this).closest('.field-mega-menu-icon');
 			var value = $(this).val();
 			field.toggleClass('empty', value == '');
-			field.find('[data-subject=mega-menu-icon-i]').attr('class', 'fa fa-lg ' + value);
+			field.find('.mega-menu-icon-i').attr('class', 'mega-menu-icon-i ' + value);
 		});
 		$(selector).change();
 

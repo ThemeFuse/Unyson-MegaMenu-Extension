@@ -191,7 +191,7 @@ class FW_Ext_Mega_Menu_Admin_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_E
 							<span class="hide-if-empty"><?php _e('Edit Icon', 'fw') ?></span>
 						</a>&nbsp;
 						<span data-action="mega-menu-pick-icon" class="mega-menu-icon-frame hide-if-empty" style="position: relative;">
-							<i data-subject="mega-menu-icon-i"></i>
+							<i class="mega-menu-icon-i"></i>
 							<a href="#" class="mega-menu-icon-remove dashicons fw-x" data-action="mega-menu-remove-icon" title="<?php esc_attr_e('Remove Icon', 'fw') ?>"></a>
 						</span>
 						<span class="mega-menu-icon-frame inline-if-empty" data-action="mega-menu-pick-icon"><i class="fa fa-lg fa-eye" style="position: relative; top: -1px;"></i></span>
