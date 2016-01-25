@@ -100,9 +100,9 @@ jQuery(function ($) {
 		});
 
 		// Immediately close dialog after clicking on icon
-		$(modal.frame.$el).on('click', '.fa', function () {
+		$(modal.frame.$el).on('change', '.fw-option-type-icon input[type="hidden"]', function () {
 			modal.set('values', {
-				icon: $(this).data('value')
+				icon: $(this).val()
 			});
 			modal.frame.close();
 		});
