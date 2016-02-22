@@ -89,14 +89,28 @@ class FW_Extension_Megamenu extends FW_Extension
 	 */
 	public function _admin_action_wp_update_nav_menu_item($menu_id, $menu_item_db_id, $args)
 	{
-		$flags = array('enabled', 'title-off', 'new-row');
+		// Save hardcoded options
+		{
+			$meta = _fw_ext_mega_menu_admin_input_POST_values($menu_item_db_id);
 
-		$meta = _fw_ext_mega_menu_admin_input_POST_values($menu_item_db_id);
-		foreach ($flags as $flag) {
-			$meta[$flag] = isset($meta[$flag]);
+			fw_ext_mega_menu_update_meta($menu_item_db_id, array(
+				'enabled' => isset($meta['enabled']),
+				'title-off' => isset($meta['title-off']),
+				'new-row' => isset($meta['new-row']),
+				'icon' => $meta['icon'],
+			));
 		}
 
-		fw_ext_mega_menu_update_meta($menu_item_db_id, $meta);
+		// Save custom options
+		{
+			$item = get_post($menu_item_db_id);
+			$values = fw_get_options_values_from_input(
+				fw_ext_mega_menu_item_options($item),
+				FW_Request::POST('fw_ext_mega_menu/items/'. $item->ID)
+			);
+
+			fw_ext_mega_menu_set_db_item_option($item, null, $values);
+		}
 	}
 
 	/**

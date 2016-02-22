@@ -62,11 +62,11 @@ function fw_ext_mega_menu_is_mm_item($item) {
 /** Item Options */
 {
 	/**
-	 * @param WP_Post $item
+	 * @param WP_Post|int $item
 	 * @return array
 	 */
 	function fw_ext_mega_menu_item_options($item) {
-		return apply_filters('fw:ext:megamenu:item-options', array('test' => array('type' => 'text'),'test2' => array('type' => 'text'),), $item);
+		return apply_filters('fw:ext:megamenu:item-options', array(), ($item instanceof WP_Error) ? $item->ID : $item);
 	}
 
 	/**
@@ -173,6 +173,8 @@ function fw_ext_mega_menu_is_mm_item($item) {
 	 * @param $value
 	 */
 	function fw_ext_mega_menu_set_db_item_option( $item = null, $option_id = null, $value ) {
+		$meta_key = 'fw:ext:megamenu:item-options';
+
 		if ( ! $item ) {
 			/** @var WP_Post $post */
 			global $post;
@@ -225,9 +227,9 @@ function fw_ext_mega_menu_is_mm_item($item) {
 				);
 			}
 
-			FW_WP_Meta::set( 'post', $item->ID, 'fw_options/'. $option_id, $value );
+			FW_WP_Meta::set( 'post', $item->ID, $meta_key .'/'. $option_id, $value );
 		} else {
-			$old_value = fw_get_db_post_option($item->ID);
+			$old_value = fw_ext_mega_menu_get_db_item_option($item->ID);
 
 			if (!is_array($value)) {
 				$value = array();
@@ -244,7 +246,7 @@ function fw_ext_mega_menu_is_mm_item($item) {
 				}
 			}
 
-			FW_WP_Meta::set( 'post', $item->ID, 'fw_options', $value );
+			FW_WP_Meta::set( 'post', $item->ID, $meta_key, $value );
 		}
 
 		/**
