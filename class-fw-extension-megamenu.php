@@ -75,7 +75,7 @@ class FW_Extension_Megamenu extends FW_Extension
 			);
 			wp_localize_script(
 				"fw-ext-{$this->get_name()}-admin",
-				'_fw_ext_megamenu',
+				'_fw_ext_mega_menu',
 				array(
 					'icon_option' => $options['icon']
 				)

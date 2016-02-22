@@ -65,8 +65,8 @@ function fw_ext_mega_menu_is_mm_item($item) {
 	 * @param WP_Post $item
 	 * @return array
 	 */
-	function fw_ext_megamenu_item_options($item) {
-		return apply_filters('fw:ext:megamenu:item-options', array(), $item);
+	function fw_ext_mega_menu_item_options($item) {
+		return apply_filters('fw:ext:megamenu:item-options', array('test' => array('type' => 'text'),'test2' => array('type' => 'text'),), $item);
 	}
 
 	/**
@@ -79,7 +79,7 @@ function fw_ext_mega_menu_is_mm_item($item) {
 	 *
 	 * @return mixed|null
 	 */
-	function fw_ext_megamenu_get_db_item_option(
+	function fw_ext_mega_menu_get_db_item_option(
 		$item = null,
 		$option_id = null,
 		$default_value = null,
@@ -108,7 +108,7 @@ function fw_ext_mega_menu_is_mm_item($item) {
 			}
 		}
 
-		$options = fw_extract_only_options(fw_ext_megamenu_item_options($item));
+		$options = fw_extract_only_options(fw_ext_mega_menu_item_options($item));
 
 		if ($option_id) {
 			$option_id = explode('/', $option_id); // 'option_id/sub/keys'
@@ -172,7 +172,7 @@ function fw_ext_mega_menu_is_mm_item($item) {
 	 * @param string|null $option_id Specific option id (accepts multikey). null - all options
 	 * @param $value
 	 */
-	function fw_ext_megamenu_set_db_item_option( $item = null, $option_id = null, $value ) {
+	function fw_ext_mega_menu_set_db_item_option( $item = null, $option_id = null, $value ) {
 		if ( ! $item ) {
 			/** @var WP_Post $post */
 			global $post;
@@ -194,7 +194,7 @@ function fw_ext_mega_menu_is_mm_item($item) {
 			}
 		}
 
-		$options = fw_extract_only_options(fw_ext_megamenu_item_options($item));
+		$options = fw_extract_only_options(fw_ext_mega_menu_item_options($item));
 
 		$sub_keys = null;
 
@@ -205,7 +205,7 @@ function fw_ext_mega_menu_is_mm_item($item) {
 			$option_id = $_option_id;
 			unset($_option_id);
 
-			$old_value = fw_ext_megamenu_set_db_item_option($item, $option_id);
+			$old_value = fw_ext_mega_menu_set_db_item_option($item, $option_id);
 
 			if ($sub_keys) { // update sub_key in old_value and use the entire value
 				$new_value = $old_value;

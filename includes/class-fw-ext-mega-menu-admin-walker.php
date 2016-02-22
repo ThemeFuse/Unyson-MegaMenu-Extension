@@ -201,10 +201,23 @@ class FW_Ext_Mega_Menu_Admin_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_E
 <?php # Use as Mega Menu ?>
 				<p class="description description-wide show-if-menu-top">
 					<label>
-						<input type="checkbox" name="<?php echo _fw_ext_mega_menu_admin_input_name($item, 'enabled') ?>" <?php checked(fw_ext_mega_menu_get_meta($item, 'enabled')) ?> class="mega-menu-enabled" />
+						<input type="checkbox" name="<?php echo _fw_ext_mega_menu_admin_input_name($item, 'enabled') ?>"
+							<?php checked(fw_ext_mega_menu_get_meta($item, 'enabled')) ?> class="mega-menu-enabled" />
 						<?php _e('Use as Mega Menu', 'fw') ?>
 					</label>
 				</p>
+				<?php if ($options = fw_ext_mega_menu_item_options($item)): ?>
+					<div class="fw-ext-megamenu-item-options fw-force-xs"><?php
+						echo fw()->backend->render_options(
+							$options,
+							fw_ext_mega_menu_get_db_item_option($item),
+							array(
+								'name_prefix' => 'fw_ext_mega_menu[items]['. $item->ID .']',
+								'id_prefix' => 'fw-ext-mega-menu-item-'. $item->ID .'-'
+							)
+						);
+					?></div>
+				<?php endif; ?>
 				<p class="field-move hide-if-no-js description description-wide hide-if-mega-menu-column">
 <?php # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ?>
 					<label>
