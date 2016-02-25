@@ -210,10 +210,12 @@ class FW_Ext_Mega_Menu_Admin_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_E
 					<div class="fw-ext-megamenu-item-options fw-force-xs"><?php
 						echo fw()->backend->render_options(
 							array(
-								'custom-options' => array(
-									'type' => 'popup',
-									'title' => apply_filters('fw:ext:mega-menu:item-options:btn-text', __('Customize', 'fw')),
-									'options' => $options,
+								'custom-options' => array_merge(
+									apply_filters('fw:ext:mega-menu:item-options:popup-option', array(
+										'type' => 'popup',
+										'title' => __('Customize', 'fw'),
+									), $item),
+									array('options' => $options)
 								),
 							),
 							fw_ext_mega_menu_get_db_item_option($item),
