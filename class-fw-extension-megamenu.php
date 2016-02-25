@@ -49,38 +49,57 @@ class FW_Extension_Megamenu extends FW_Extension
 	 */
 	public function _admin_action_admin_enqueue_scripts($hook)
 	{
-		if ($hook == 'nav-menus.php') {
+		if ($hook != 'nav-menus.php') {
+			return;
+		}
 
-			// Enqueue all the necessary files for Icon dialog
-			$options = array(
-				'icon' => apply_filters('fw:ext:megamenu:icon-option', array(
-					'type' => 'icon',
-					'label' => __('Select Icon', 'fw'),
-				)),
-			);
-			fw()->backend->enqueue_options_static($options);
+		// Enqueue all the necessary files for Icon dialog
+		$options = array(
+			'icon' => apply_filters('fw:ext:megamenu:icon-option', array(
+				'type' => 'icon',
+				'label' => __('Select Icon', 'fw'),
+			)),
+		);
+		fw()->backend->enqueue_options_static($options);
 
-			wp_enqueue_media();
-			wp_enqueue_style(
-				"fw-ext-{$this->get_name()}-admin",
-				$this->get_uri('/static/css/admin.css'),
-				array(),
-				$this->manifest->get_version()
-			);
-			wp_enqueue_script(
-				"fw-ext-{$this->get_name()}-admin",
-				$this->get_uri('/static/js/admin.js'),
-				array('fw'),
-				$this->manifest->get_version()
-			);
-			wp_localize_script(
-				"fw-ext-{$this->get_name()}-admin",
-				'_fw_ext_mega_menu',
-				array(
-					'icon_option' => $options['icon']
-				)
-			);
+		wp_enqueue_media();
+		wp_enqueue_style(
+			"fw-ext-{$this->get_name()}-admin",
+			$this->get_uri('/static/css/admin.css'),
+			array(),
+			$this->manifest->get_version()
+		);
+		wp_enqueue_script(
+			"fw-ext-{$this->get_name()}-admin",
+			$this->get_uri('/static/js/admin.js'),
+			array('fw'),
+			$this->manifest->get_version()
+		);
+		wp_localize_script(
+			"fw-ext-{$this->get_name()}-admin",
+			'_fw_ext_mega_menu',
+			array(
+				'icon_option' => $options['icon']
+			)
+		);
 
+		/**
+		 * Enqueue assets for item options
+		 */
+		{
+			global $nav_menu_selected_id;
+
+			if ($items = wp_get_nav_menu_items($nav_menu_selected_id)) {
+				fw()->backend->enqueue_options_static(array(
+					'container' => array('type' => 'popup', 'options' => array('fake' => array('type' => 'text'))),
+				));
+
+				foreach ($items as $item) {
+					if ($options = fw_ext_mega_menu_item_options($item)) {
+						fw()->backend->enqueue_options_static($options);
+					}
+				}
+			}
 		}
 	}
 

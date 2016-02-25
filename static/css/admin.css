@@ -163,6 +163,10 @@ body .mega-menu-title-off-label {
 	box-sizing: border-box;
 }
 
+.fw-ext-megamenu-item-options > .fw-container {
+	padding: 0;
+}
+
 .fw-ext-megamenu-item-options .fw-backend-option {
 	padding: 0;
 	margin: 2px 0 5px;
