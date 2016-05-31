@@ -182,6 +182,8 @@ class FW_Ext_Mega_Menu_Admin_Walker extends Walker_Nav_Menu /* Walker_Nav_Menu_E
 					</label>
 				</p>
 <?php # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ?>
+<?php do_action( 'wp_nav_menu_item_custom_fields', $item_id, $item, $depth, $args ); // https://github.com/ThemeFuse/Unyson-MegaMenu-Extension/issues/5 ?>
+<?php # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ?>
 <?php # Icon ?>
 				<p class="field-mega-menu-icon description description-wide empty show-if-screen-options-icon">
 					<label>
