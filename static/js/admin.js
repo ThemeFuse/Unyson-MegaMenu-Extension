@@ -48,10 +48,14 @@ jQuery(function ($) {
 		function update()
 		{
 			menu.children().removeClass('mega-menu');
+			menu.find('.mega-menu-title').prop('disabled', true);
+			menu.find('.edit-menu-item-title').prop('disabled', false);
 			menu.children('.menu-item-depth-0:has(.mega-menu-enabled:checked)').each(function () {
 				var item = $(this);
 				item.addClass('mega-menu');
 				item.nextUntil('.menu-item-depth-0').addClass('mega-menu');
+				item.siblings('.mega-menu').find('.mega-menu-title').prop('disabled', false);
+				item.siblings('.mega-menu').find('.edit-menu-item-title').prop('disabled', true);
 			});
 		}
 
