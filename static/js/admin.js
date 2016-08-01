@@ -34,7 +34,7 @@ jQuery(function ($) {
 
 		$(document).on('change', selector, function () {
 			var checkbox = $(this);
-			checkbox.closest('p').find('.mega-menu-title').prop('disabled', checkbox.is(':checked'));
+			checkbox.closest('p').find('.mega-menu-title').prop('readonly', checkbox.is(':checked'));
 		});
 		$(selector).change();
 
