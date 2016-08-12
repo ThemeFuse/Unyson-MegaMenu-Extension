@@ -1,6 +1,6 @@
 jQuery(function ($) {
 
-	var localized = _fw_ext_megamenu;
+	var localized = _fw_ext_mega_menu;
 
 	// Screen Options: Show advanced menu properties: Icon Checkbox
 	(function () {
