@@ -24,22 +24,10 @@ class FW_Extension_Megamenu extends FW_Extension
 	/**
 	 * @internal
 	 */
-	public function _init()
-	{
-		if (is_admin()) {
-			$this->add_admin_actions();
-			$this->add_admin_filters();
-		}
-	}
-
-	private function add_admin_actions()
-	{
-		add_action('admin_enqueue_scripts', array($this, '_admin_action_admin_enqueue_scripts'));
+	public function _init() {
 		add_action('wp_update_nav_menu_item', array($this, '_admin_action_wp_update_nav_menu_item'), 10, 3);
-	}
+		add_action('admin_enqueue_scripts', array($this, '_admin_action_admin_enqueue_scripts'));
 
-	private function add_admin_filters()
-	{
 		add_filter('wp_edit_nav_menu_walker', array($this, '_admin_filter_wp_edit_nav_menu_walker'));
 		add_filter('manage_nav-menus_columns', array($this, '_admin_filter_manage_nav_menus_columns'), 20);
 	}
