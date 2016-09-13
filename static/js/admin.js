@@ -91,7 +91,7 @@ jQuery(function ($) {
 				icon: ''
 			},
 			size: 'small'
-		});
+		}), eventProxy = new Backbone.Model;
 
 		// Immediately close dialog after clicking on icon
 		$(modal.frame.$el).on('change', '.fw-option-type-icon input[type="hidden"]', function () {
@@ -134,12 +134,15 @@ jQuery(function ($) {
 
 			event.preventDefault();
 
+			// prevent previous item event listener execution
+			eventProxy.stopListening(modal);
+
 			modal.set('values', {
 				icon: $(event.target).closest('.field-mega-menu-icon').find('input').val()
 			});
 
 			// Listen for values change
-			modal.once('change:values', function(modal, values) {
+			eventProxy.listenTo(modal, 'change:values', function(modal, values) {
 				$(event.target).closest('.field-mega-menu-icon').find('input').val(values.icon).trigger('change');
 			});
 
