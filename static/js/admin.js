@@ -14,8 +14,7 @@ jQuery(function ($) {
 			$(container).toggleClass('screen-options-icon', $(this).is(':checked'));
 		});
 
-		$(selector).change();
-
+		$(selector).trigger('change');
 	})();
 
 	// Mega Menu Column Title: input
@@ -24,8 +23,8 @@ jQuery(function ($) {
 		$(document).on('change', selector, function () {
 			$(this).closest('li').find(selector).val($(this).val());
 		});
-		// $(selector).change() is not necessary since those two fields
-		// are populated by wordpress with the same value (title)
+		// $(selector).trigger('change') is not necessary since those two fields
+		// are populated by WordPress with the same value (title)
 
 	})('.mega-menu-title, .edit-menu-item-title');
 
@@ -36,7 +35,7 @@ jQuery(function ($) {
 			var checkbox = $(this);
 			checkbox.closest('p').find('.mega-menu-title').prop('readonly', checkbox.is(':checked'));
 		});
-		$(selector).change();
+		$(selector).trigger('change');
 
 	})('.mega-menu-title-off');
 
@@ -78,29 +77,20 @@ jQuery(function ($) {
 			field.toggleClass('empty', value == '');
 			field.find('.mega-menu-icon-i').attr('class', 'mega-menu-icon-i ' + value);
 		});
-		$(selector).change();
+		$(selector).trigger('change');
 
 	})('.field-mega-menu-icon [data-subject=mega-menu-icon-input]');
 
-	// Add/Edit Icon Buttons
-	$(document).on('click', '[data-action=mega-menu-pick-icon]', function (event) {
-
-		event.preventDefault();
-
+	(function(){
 		var modal = new fw.OptionsModal({
 			title: localized.icon_option.label,
 			options: [{
 				icon: localized.icon_option
 			}],
 			values: {
-				icon: $(event.target).closest('.field-mega-menu-icon').find('input').val()
+				icon: ''
 			},
 			size: 'small'
-		});
-
-		// Listen for values change
-		modal.on('change:values', function(modal, values) {
-			$(event.target).closest('.field-mega-menu-icon').find('input').val(values.icon).change();
 		});
 
 		// Immediately close dialog after clicking on icon
@@ -111,40 +101,57 @@ jQuery(function ($) {
 			modal.frame.close();
 		});
 
-		// Resize icon list to fit entire window
-		function resizeIconList()
 		{
-			var option = modal.frame.$el.find('#fw-backend-option-fw-edit-options-modal-icon');
-			var frame_content = option.closest('.media-frame-content');
-			var icon_list = option.find('.js-option-type-icon-list');
+			// Resize icon list to fit entire window
+			function resizeIconList() {
+				var option = modal.frame.$el.find('#fw-backend-option-fw-edit-options-modal-icon'),
+					frame_content = option.closest('.media-frame-content'),
+					icon_list = option.find('.js-option-type-icon-list');
 
-			// get rid of bottom border
-			option.closest('.fw-row').css('border-bottom', 'none');
+				// get rid of bottom border
+				option.closest('.fw-row').css('border-bottom', 'none');
 
-			// resize icon list to fit entire window
-			icon_list.css('max-height', 'none').height(1000000);
-			frame_content.scrollTop(1000000);
-			icon_list.height(icon_list.height() - frame_content.scrollTop());
+				// resize icon list to fit entire window
+				icon_list.css('max-height', 'none').height(1000000);
+				frame_content.scrollTop(1000000);
+				icon_list.height(icon_list.height() - frame_content.scrollTop());
+			}
+
+			modal.on('change:html', resizeIconList);
+			$(window).resize(resizeIconList);
 		}
 
-		modal.on('change:html', resizeIconList);
-		$(window).resize(resizeIconList);
-
-		modal.open();
-
 		// Replace [Save] button by [Cancel]
-		$(modal.frame.$el).find('.media-toolbar-primary').html('<a href="#" class="button media-button button-large">Cancel</a>').find('a').click(function (event) {
+		$(modal.frame.$el).find('.media-toolbar-primary')
+			.html('<a href="#" class="button media-button button-large">Cancel</a>')
+			.find('a').on('click', function (event) {
 			event.preventDefault();
 			modal.frame.close();
 		});
 
-	});
+		// Add/Edit Icon Buttons
+		$(document).on('click', '[data-action=mega-menu-pick-icon]', function (event) {
+
+			event.preventDefault();
+
+			modal.set('values', {
+				icon: $(event.target).closest('.field-mega-menu-icon').find('input').val()
+			});
+
+			// Listen for values change
+			modal.once('change:values', function(modal, values) {
+				$(event.target).closest('.field-mega-menu-icon').find('input').val(values.icon).trigger('change');
+			});
+
+			modal.open();
+		});
+	})();
 
 	// Remove Icon Button
 	$(document).on('click', '[data-action=mega-menu-remove-icon]', function (event) {
 		event.preventDefault();
 		event.stopPropagation();
-		$(this).closest('.field-mega-menu-icon').find('input').val('').change();
+		$(this).closest('.field-mega-menu-icon').find('input').val('').trigger('change');
 	});
 
 	// The problem is in using **change** event for initialization.
