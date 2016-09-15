@@ -27,6 +27,7 @@ class FW_Extension_Megamenu extends FW_Extension
 	public function _init() {
 		add_action('wp_update_nav_menu_item', array($this, '_admin_action_wp_update_nav_menu_item'), 10, 3);
 		add_action('admin_enqueue_scripts', array($this, '_admin_action_admin_enqueue_scripts'));
+		add_action('wp_ajax_fw_ext_megamenu_item_values', array($this, '_action_ajax_item_values'));
 
 		add_filter('wp_edit_nav_menu_walker', array($this, '_admin_filter_wp_edit_nav_menu_walker'));
 		add_filter('manage_nav-menus_columns', array($this, '_admin_filter_manage_nav_menus_columns'), 20);
@@ -67,7 +68,11 @@ class FW_Extension_Megamenu extends FW_Extension
 			"fw-ext-{$this->get_name()}-admin",
 			'_fw_ext_mega_menu',
 			array(
-				'icon_option' => $options['icon']
+				'l10n' => array(
+					'item_options_btn' => apply_filters('fw:ext:megamenu:label:item-options-btn', __('Settings', 'fw')),
+				),
+				'icon_option' => $options['icon'],
+				'item_options' => $this->get_options('item'),
 			)
 		);
 
@@ -75,19 +80,11 @@ class FW_Extension_Megamenu extends FW_Extension
 		 * Enqueue assets for item options
 		 */
 		{
-			global $nav_menu_selected_id;
+			fw()->backend->enqueue_options_static(array(
+				'container' => array('type' => 'popup', 'options' => array('fake' => array('type' => 'text'))),
+			));
 
-			if ($items = wp_get_nav_menu_items($nav_menu_selected_id)) {
-				fw()->backend->enqueue_options_static(array(
-					'container' => array('type' => 'popup', 'options' => array('fake' => array('type' => 'text'))),
-				));
-
-				foreach ($items as $item) {
-					if ($options = fw_ext_mega_menu_item_options($item)) {
-						fw()->backend->enqueue_options_static($options);
-					}
-				}
-			}
+			fw()->backend->enqueue_options_static($this->get_options('item'));
 		}
 	}
 
@@ -108,15 +105,9 @@ class FW_Extension_Megamenu extends FW_Extension
 			));
 		}
 
-		// Save custom options
+		// Save item custom options
 		{
-			$item = get_post($menu_item_db_id);
-			$values = fw_get_options_values_from_input(
-				fw_ext_mega_menu_item_options($item),
-				FW_Request::POST('fw_ext_mega_menu/items/'. $item->ID)
-			);
-
-			fw_ext_mega_menu_set_db_item_option($item, null, $values);
+			// fixme: $item = get_post($menu_item_db_id); ...
 		}
 	}
 
@@ -144,5 +135,15 @@ class FW_Extension_Megamenu extends FW_Extension
 	public function _get_link()
 	{
 		return self_admin_url('nav-menus.php');
+	}
+
+	public function _action_ajax_item_values() {
+		if (!current_user_can('manage_options')) {
+			wp_send_json_error();
+		}
+
+		wp_send_json_success(array(
+			'values' => fw_ext_mega_menu_get_db_item_option(intval($_POST['id']))
+		));
 	}
 }

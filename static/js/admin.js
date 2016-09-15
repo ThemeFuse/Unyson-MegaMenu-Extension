@@ -168,4 +168,84 @@ jQuery(function ($) {
 	// dialog based on this flag.
 	wpNavMenu.menusChanged = false;
 
+	/**
+	 * Item options
+	 */
+	(function(){
+		var inst = {
+			values: {},
+			options: localized.item_options,
+			$input: null,
+			// Save item values in form hidden input
+			updateInput: function(){
+				if (inst.$input === null) {
+					inst.$input = $('<input type="hidden" name="fw-megamenu-items-values" value="[]" />');
+					$('#update-nav-menu').append(inst.$input);
+				}
+
+				inst.$input.val(JSON.stringify(inst.values));
+			},
+			modal: new fw.OptionsModal({
+				options: []
+			}),
+			eventProxy: new Backbone.Model({}),
+			initUi: function ($item) {
+				if ($item.data('fw-ext-megamenu-options-ui-initialized')) {
+					return; // already initialized
+				} else {
+					$item.data('fw-ext-megamenu-options-ui-initialized', true);
+				}
+
+				var id = $item.find('input.menu-item-data-db-id:first').val(),
+					$button = $('<button type="button" disabled="disabled" class="button fw-megamenu-stngs"></button>')
+						.text(localized.l10n.item_options_btn);
+
+				$item.find('.field-mega-menu-icon:first')
+					.append('<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>')
+					.append($button);
+
+				$.ajax({
+					url: ajaxurl,
+					method: 'post',
+					dataType: 'json',
+					data: {
+						action: 'fw_ext_megamenu_item_values',
+						id: id
+					}
+				}).done(function(r){
+					if (r.success) {
+						$button.removeAttr('disabled');
+						inst.values[id] = r.data.values;
+					} else {
+						$button.text('Ajax Error');
+					}
+				}).fail(function(x, y, error){
+					$button.text(String(error));
+				});
+			}
+		};
+
+		if (!_.isEmpty(inst.options)) {
+			// Add ui elements on item box open
+			$('#update-nav-menu').on('click', '.menu-item > .menu-item-bar .item-edit', function(e){
+				_.defer(_.partial(inst.initUi, $(this).closest('.menu-item')));
+			});
+
+			// Prepare and open modal on button click
+			$('#update-nav-menu').on('click', '.menu-item > .menu-item-settings button.fw-megamenu-stngs', function(e){
+				var id = $(e.target).closest('.menu-item').find('input.menu-item-data-db-id:first').val();
+
+				inst.eventProxy.stopListening(inst.modal);
+				inst.modal.set('values', inst.values[id]);
+				inst.eventProxy.listenTo(inst.modal, 'change:values', function(){
+					inst.values[id] = inst.modal.get('values');
+					inst.updateInput();
+				});
+
+				inst.modal.set('options', inst.options);
+
+				inst.modal.open();
+			});
+		}
+	})();
 });

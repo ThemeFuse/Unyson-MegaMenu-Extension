@@ -9,5 +9,10 @@ $manifest['description'] = __( 'The Mega Menu extension adds a user-friendly dro
 $manifest['version'] = '1.1.0';
 $manifest['display'] = true;
 $manifest['standalone'] = true;
+$manifest['requirements'] = array(
+	'framework' => array(
+		'min_version' => '2.5.9', // class FW_Db_Options_Model
+	),
+);
 
 $manifest['github_update'] = 'ThemeFuse/Unyson-MegaMenu-Extension';

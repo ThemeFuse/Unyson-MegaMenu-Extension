@@ -59,228 +59,96 @@ function fw_ext_mega_menu_is_mm_item($item) {
 	return $mm_items[$item->ID];
 }
 
-/** Item Options */
-{
-	/**
-	 * @param WP_Post|int $item
-	 * @return array
-	 */
-	function fw_ext_mega_menu_item_options($item) {
-		return apply_filters('fw:ext:megamenu:item-options', array(), ($item instanceof WP_Error) ? $item->ID : $item);
+/**
+ * Item Options
+ * @since 1.1.0
+ */
+class FW_Db_Options_Model_MegaMenu extends FW_Db_Options_Model {
+	protected function get_id()
+	{
+		return 'megamenu';
+	}
+
+	protected function get_fw_storage_params($item_id, array $extra_data = array()) {
+		return array( 'megamenu-item' => $item_id );
 	}
 
 	/**
-	 * Get item option value from the database
-	 *
-	 * @param WP_Post|int $item
-	 * @param string|null $option_id Specific option id (accepts multikey). null - all options
-	 * @param null|mixed $default_value If no option found in the database, this value will be returned
-	 * @param null|bool $get_original_value Original value is that with no translations and other changes
-	 *
-	 * @return mixed|null
+	 * @return FW_Extension_Megamenu
 	 */
-	function fw_ext_mega_menu_get_db_item_option(
-		$item = null,
-		$option_id = null,
-		$default_value = null,
-		$get_original_value = null
-	) {
-		$meta_key = 'fw:ext:megamenu:item-options';
+	private function ext() {
+		return fw_ext('megamenu');
+	}
 
-		if ( ! $item ) {
-			/** @var WP_Post $post */
-			global $post;
-
-			if ( ! $post || $post->post_type != 'nav_menu_item' ) {
-				return $default_value;
-			} else {
-				$item = $post;
-			}
-		} elseif ( ! $item instanceof WP_Post ) {
-			if (
-				($post = get_post($item))
-				&&
-				$post->post_type == 'nav_menu_item'
-			) {
-				$item = $post;
-			} else {
-				return $default_value;
-			}
-		}
-
-		$options = fw_extract_only_options(fw_ext_mega_menu_item_options($item));
-
-		if ($option_id) {
-			$option_id = explode('/', $option_id); // 'option_id/sub/keys'
-			$_option_id = array_shift($option_id); // 'option_id'
-			$sub_keys  = implode('/', $option_id); // 'sub/keys'
-			$option_id = $_option_id;
-			unset($_option_id);
-
-			$value = FW_WP_Meta::get(
-				'post',
-				$item->ID,
-				$meta_key .'/' . $option_id,
-				null,
-				$get_original_value
-			);
-
-			if (isset($options[$option_id])) {
-				$value = fw()->backend->option_type($options[$option_id]['type'])->storage_load(
-					$option_id,
-					$options[$option_id],
-					$value,
-					array( 'post-id' => $item->ID, )
-				);
-			}
-
-			if ($sub_keys) {
-				return fw_akg($sub_keys, $value, $default_value);
-			} else {
-				return is_null($value) ? $default_value : $value;
-			}
+	protected function _get_cache_key($key, $item_id, array $extra_data = array())
+	{
+		if ($key === 'options') {
+			return '';
 		} else {
-			$value = FW_WP_Meta::get(
-				'post',
-				$item->ID,
-				$meta_key,
-				$default_value,
-				$get_original_value
-			);
-
-			if (!is_array($value)) {
-				$value = array();
-			}
-
-			foreach ($options as $_option_id => $_option) {
-				$value[$_option_id] = fw()->backend->option_type($_option['type'])->storage_load(
-					$_option_id,
-					$_option,
-					isset($value[$_option_id]) ? $value[$_option_id] : null,
-					array( 'post-id' => $item->ID, )
-				);
-			}
-
-			return $value;
+			return parent::_get_cache_key($key, $item_id, $extra_data);
 		}
 	}
 
-	/**
-	 * Set item option value in database
-	 *
-	 * @param WP_Post|int $item
-	 * @param string|null $option_id Specific option id (accepts multikey). null - all options
-	 * @param $value
-	 */
-	function fw_ext_mega_menu_set_db_item_option( $item = null, $option_id = null, $value ) {
-		$meta_key = 'fw:ext:megamenu:item-options';
+	protected function get_options($item_id, array $extra_data = array())
+	{
+		return $this->ext()->get_options('item');
+	}
 
-		if ( ! $item ) {
-			/** @var WP_Post $post */
-			global $post;
+	protected function get_values($item_id, array $extra_data = array())
+	{
+		return FW_WP_Meta::get('post', $item_id, 'fw:ext:megamenu:item-options', array());
+	}
 
-			if ( ! $post || $post->post_type != 'nav_menu_item' ) {
-				return;
-			} else {
-				$item = $post;
-			}
-		} elseif ( ! $item instanceof WP_Post ) {
-			if (
-				($post = get_post($item))
-				&&
-				$post->post_type == 'nav_menu_item'
-			) {
-				$item = $post;
-			} else {
-				return;
-			}
-		}
+	protected function set_values($item_id, $values, array $extra_data = array())
+	{
+		return FW_WP_Meta::set( 'post', $item_id, 'fw:ext:megamenu:item-options', $values );
+	}
 
-		$options = fw_extract_only_options(fw_ext_mega_menu_item_options($item));
+	protected function _init()
+	{
+		/**
+		 * Get item option value from the database
+		 *
+		 * @param int $item
+		 * @param string|null $option_id Specific option id (accepts multikey). null - all options
+		 * @param null|mixed $default_value If no option found in the database, this value will be returned
+		 *
+		 * @return mixed|null
+		 */
+		function fw_ext_mega_menu_get_db_item_option($item, $option_id = null, $default_value = null) {
+			/*if ( ! $item ) {
+				global $post;
 
-		$sub_keys = null;
-
-		if ($option_id) {
-			$option_id = explode('/', $option_id); // 'option_id/sub/keys'
-			$_option_id = array_shift($option_id); // 'option_id'
-			$sub_keys  = implode('/', $option_id); // 'sub/keys'
-			$option_id = $_option_id;
-			unset($_option_id);
-
-			$old_value = fw_ext_mega_menu_set_db_item_option($item, $option_id);
-
-			if ($sub_keys) { // update sub_key in old_value and use the entire value
-				$new_value = $old_value;
-				fw_aks($sub_keys, $value, $new_value);
-				$value = $new_value;
-				unset($new_value);
-
-				$old_value = fw_akg($sub_keys, $old_value);
-			}
-
-			if (isset($options[$option_id])) {
-				$value = fw()->backend->option_type($options[$option_id]['type'])->storage_save(
-					$option_id,
-					$options[$option_id],
-					$value,
-					array( 'post-id' => $item->ID, )
-				);
-			}
-
-			FW_WP_Meta::set( 'post', $item->ID, $meta_key .'/'. $option_id, $value );
-		} else {
-			$old_value = fw_ext_mega_menu_get_db_item_option($item->ID);
-
-			if (!is_array($value)) {
-				$value = array();
-			}
-
-			foreach ($value as $_option_id => $_option_value) {
-				if (isset($options[$_option_id])) {
-					$value[$_option_id] = fw()->backend->option_type($options[$_option_id]['type'])->storage_save(
-						$_option_id,
-						$options[$_option_id],
-						$_option_value,
-						array( 'post-id' => $item->ID, )
-					);
+				if ( ! $post || $post->post_type != 'nav_menu_item' ) {
+					return $default_value;
+				} else {
+					$item = $post;
 				}
-			}
+			} elseif ( ! $item instanceof WP_Post ) {
+				if (
+					($post = get_post($item))
+					&&
+					$post->post_type == 'nav_menu_item'
+				) {
+					$item = $post;
+				} else {
+					return $default_value;
+				}
+			}*/
 
-			FW_WP_Meta::set( 'post', $item->ID, $meta_key, $value );
+			return FW_Db_Options_Model::_get_instance('megamenu')->get(intval($item), $option_id, $default_value);
 		}
 
 		/**
-		 * @since 1.1.0
+		 * Set item option value in database
+		 *
+		 * @param int $item
+		 * @param string|null $option_id Specific option id (accepts multikey). null - all options
+		 * @param $value
 		 */
-		do_action('fw:ext:megamenu:item-options:update',
-			$item->ID,
-			/**
-			 * Option id
-			 * First level multi-key
-			 *
-			 * For e.g.
-			 *
-			 * if $option_id is 'hello/world/7'
-			 * this will be 'hello'
-			 */
-			$option_id,
-			/**
-			 * The remaining sub-keys
-			 *
-			 * For e.g.
-			 *
-			 * if $option_id is 'hello/world/7'
-			 * $option_id_keys will be array('world', '7')
-			 *
-			 * if $option_id is 'hello'
-			 * $option_id_keys will be array()
-			 */
-			explode('/', $sub_keys),
-			/**
-			 * Old post option(s) value
-			 * @since 2.3.3
-			 */
-			$old_value
-		);
+		function fw_ext_mega_menu_set_db_item_option( $item, $option_id = null, $value ) {
+			return FW_Db_Options_Model::_get_instance('megamenu')->set(intval($item), $option_id, $value);
+		}
 	}
 }
+new FW_Db_Options_Model_MegaMenu();
