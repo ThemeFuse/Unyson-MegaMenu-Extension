@@ -259,7 +259,7 @@ jQuery(function ($) {
 							id: id
 						}
 					}).done(function (r) {
-						if (r.success) {
+						if (r && r.success) {
 							$button.removeAttr('disabled');
 							inst.values[id] = r.data.values;
 						} else {

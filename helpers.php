@@ -20,39 +20,50 @@ function fw_ext_mega_menu_update_meta($post, array $array) {
  * @return bool
  */
 function fw_ext_mega_menu_is_mm_item($item) {
-	$cache_key = fw_ext('megamenu')->get_cache_key('/mm_item');
+	if (!is_object($item)) {
+		if ($item = get_post($item)) {
+			$item = wp_setup_nav_menu_item($item);
+		} else {
+			return false;
+		}
+	}
 
 	try {
-		$mm_items = FW_Cache::get($cache_key);
+		$mm_items = FW_Cache::get( $cache_key = fw_ext('megamenu')->get_cache_key('/mm_item') );
 	} catch (FW_Cache_Not_Found_Exception $e) {
 		$mm_items = array();
 	}
 
-	if (isset($mm_items[$item->ID])) {
+	if (array_key_exists($item->ID, $mm_items)) {
 		return $mm_items[$item->ID];
 	}
 
+	$level = 0;
 	$cursor_item = array(
 		'id' => $item->ID,
-		'parent' => $item->menu_item_parent,
+		'parent' => intval($item->menu_item_parent),
 	);
 
 	do {
-		$is_mm_item = fw_ext_mega_menu_get_meta($cursor_item['id'], 'enabled');
+		++$level;
+		$mm_items[ $cursor_item['id'] ] = 0; // cache all parsed items to prevent posts query on next function call
 	} while(
-		!$is_mm_item
-		&&
-		intval($cursor_item['parent']) !== 0
+		/**
+		 * Only first level parent item can have the "Use as MegaMenu" checkbox.
+		 * Other level items also can have set this checkbox when they were on first level,
+		 * but it is hidden and must be ignored.
+		 */
+		$cursor_item['parent'] !== 0
 		&&
 		($cursor_item = get_post($cursor_item['parent']))
 		&&
 		($cursor_item = array(
 			'id' => $cursor_item->ID,
-			'parent' => get_post_meta( $cursor_item->ID, '_menu_item_menu_item_parent', true )
+			'parent' => intval(get_post_meta( $cursor_item->ID, '_menu_item_menu_item_parent', true ))
 		))
 	);
 
-	$mm_items[$item->ID] = (bool)$is_mm_item;
+	$mm_items[$item->ID] = (fw_ext_mega_menu_get_meta($cursor_item['id'], 'enabled') ? $level : 0);
 
 	FW_Cache::set($cache_key, $mm_items);
 
@@ -105,14 +116,27 @@ class FW_Db_Options_Model_MegaMenu extends FW_Db_Options_Model {
 		return $options;
 	}
 
+	/**
+	 * Use theme in meta name
+	 * so when the user will change the theme which has other options, there will be no notices/errors/conflicts
+	 * @return string
+	 */
+	public static function get_meta_name() {
+		/**
+		 * Use basename() because it can be 'theme-name/theme-name-parent'
+		 * then after theme update it becomes 'theme-name-parent'
+		 */
+		return 'fw:ext:mm:io:'. basename(get_template());
+	}
+
 	protected function get_values($item_id, array $extra_data = array())
 	{
-		return FW_WP_Meta::get('post', $item_id, 'fw:ext:megamenu:item-options', array());
+		return FW_WP_Meta::get( 'post', $item_id, self::get_meta_name(), array() );
 	}
 
 	protected function set_values($item_id, $values, array $extra_data = array())
 	{
-		return FW_WP_Meta::set( 'post', $item_id, 'fw:ext:megamenu:item-options', $values );
+		return FW_WP_Meta::set( 'post', $item_id, self::get_meta_name(), $values );
 	}
 
 	protected function _init()
@@ -121,7 +145,7 @@ class FW_Db_Options_Model_MegaMenu extends FW_Db_Options_Model {
 		 * Get item option value from the database
 		 *
 		 * @param int $item
-		 * @param string|null $option_id Specific option id (accepts multikey). null - all options
+		 * @param string|null $option_id 'type/option_id' (accepts multikey). null - all options
 		 * @param null|mixed $default_value If no option found in the database, this value will be returned
 		 *
 		 * @return mixed|null
@@ -154,7 +178,7 @@ class FW_Db_Options_Model_MegaMenu extends FW_Db_Options_Model {
 		 * Set item option value in database
 		 *
 		 * @param int $item
-		 * @param string|null $option_id Specific option id (accepts multikey). null - all options
+		 * @param string|null $option_id 'type/option_id' (accepts multikey). null - all options
 		 * @param $value
 		 */
 		function fw_ext_mega_menu_set_db_item_option( $item, $option_id = null, $value ) {

@@ -92,21 +92,64 @@ class FW_Extension_Megamenu extends FW_Extension
 	 */
 	public function _admin_action_wp_update_nav_menu_item($menu_id, $menu_item_db_id, $args)
 	{
+		if (!isset($_POST['menu']) || !isset($_POST['action'])) {
+			return; // this is not a form submit
+		}
+
 		// Save hardcoded options
 		{
 			$meta = _fw_ext_mega_menu_admin_input_POST_values($menu_item_db_id);
-
-			fw_ext_mega_menu_update_meta($menu_item_db_id, array(
-				'enabled' => isset($meta['enabled']),
+			$meta = array(
+				'enabled' => (
+					isset($meta['enabled'])
+					&&
+					// only first level items can have "Enable as MegaMenu" checkbox
+					!intval(get_post_meta( $menu_item_db_id, '_menu_item_menu_item_parent', true ))
+				),
 				'title-off' => isset($meta['title-off']),
 				'new-row' => isset($meta['new-row']),
 				'icon' => $meta['icon'],
-			));
+			);
+
+			fw_ext_mega_menu_update_meta($menu_item_db_id, $meta);
 		}
 
 		// Save item custom options
 		{
-			// fixme: $item = get_post($menu_item_db_id); ...
+			$item_values = fw_ext_mega_menu_get_db_item_option($menu_item_db_id);
+
+			if (isset($_POST['fw-megamenu-items-values'])) {
+				// cache to prevent json_decode() on every item save
+				try {
+					$decoded_values = FW_Cache::get($cache_key = 'fw:ext:megamenu:POST-items-values-decoded');
+				} catch (FW_Cache_Not_Found_Exception $e) {
+					FW_Cache::set(
+						$cache_key,
+						$decoded_values = json_decode(FW_Request::POST('fw-megamenu-items-values'), true)
+					);
+				}
+
+				if (isset($decoded_values[$menu_item_db_id])) {
+					$item_values = array_merge(
+						$item_values,
+						$decoded_values[$menu_item_db_id]
+					);
+				}
+			}
+
+			if ($level = fw_ext_mega_menu_is_mm_item($menu_item_db_id)) {
+				if ($level === 1) {
+					$item_values['type'] = 'row';
+				} elseif ($level === 2) {
+					$item_values['type'] = 'column';
+				} else {
+					$item_values['type'] = 'item';
+				}
+			} else {
+				$item_values['type'] = '';
+			}
+
+			fw_ext_mega_menu_set_db_item_option($menu_item_db_id, null, $item_values);
 		}
 	}
 
@@ -142,12 +185,7 @@ class FW_Extension_Megamenu extends FW_Extension
 		}
 
 		wp_send_json_success(array(
-			//'values' => fw_ext_mega_menu_get_db_item_option(intval($_POST['id']))
-			'values' => array(
-				'row' => array(),
-				'column' => array(),
-				'item' => array(),
-			),
+			'values' => fw_ext_mega_menu_get_db_item_option(intval($_POST['id']))
 		));
 	}
 }
