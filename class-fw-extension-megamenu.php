@@ -72,7 +72,11 @@ class FW_Extension_Megamenu extends FW_Extension
 					'item_options_btn' => apply_filters('fw:ext:megamenu:label:item-options-btn', __('Settings', 'fw')),
 				),
 				'icon_option' => $options['icon'],
-				'item_options' => $this->get_options('item'),
+				'options' => array(
+					'row'    => $this->get_options('row'),
+					'column' => $this->get_options('column'),
+					'item'   => $this->get_options('item'),
+				),
 			)
 		);
 
@@ -84,6 +88,8 @@ class FW_Extension_Megamenu extends FW_Extension
 				'container' => array('type' => 'popup', 'options' => array('fake' => array('type' => 'text'))),
 			));
 
+			fw()->backend->enqueue_options_static($this->get_options('row'));
+			fw()->backend->enqueue_options_static($this->get_options('column'));
 			fw()->backend->enqueue_options_static($this->get_options('item'));
 		}
 	}
@@ -143,7 +149,12 @@ class FW_Extension_Megamenu extends FW_Extension
 		}
 
 		wp_send_json_success(array(
-			'values' => fw_ext_mega_menu_get_db_item_option(intval($_POST['id']))
+			//'values' => fw_ext_mega_menu_get_db_item_option(intval($_POST['id']))
+			'values' => array(
+				'row' => array(),
+				'column' => array(),
+				'item' => array(),
+			),
 		));
 	}
 }

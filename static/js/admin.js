@@ -174,7 +174,7 @@ jQuery(function ($) {
 	(function(){
 		var inst = {
 			values: {},
-			options: localized.item_options,
+			options: localized.options,
 			$input: null,
 			// Save item values in form hidden input
 			updateInput: function(){
@@ -185,67 +185,139 @@ jQuery(function ($) {
 
 				inst.$input.val(JSON.stringify(inst.values));
 			},
+			getItemType: function ($item) {
+				var parents = [$item],
+					$parent = $item;
+
+				// find all parents
+				while (!$parent.hasClass('menu-item-depth-0')) {
+					$parent = $parent.prev();
+					parents.push($parent);
+				}
+
+				if (!$parent.find('input.mega-menu-enabled:first').is(':checked')) {
+					return false; // parent is not MegaMenu enabled
+				}
+
+				if ($item.hasClass('menu-item-depth-0')) {
+					return 'row';
+				} else if ($item.hasClass('menu-item-depth-1')) {
+					return 'column';
+				} else {
+					return 'item';
+				}
+			},
 			modal: new fw.OptionsModal({
 				options: []
 			}),
 			eventProxy: new Backbone.Model({}),
-			initUi: function ($item) {
-				if ($item.data('fw-ext-megamenu-options-ui-initialized')) {
-					return; // already initialized
-				} else {
-					$item.data('fw-ext-megamenu-options-ui-initialized', true);
+			/**
+			 * Remember ajax handlers and abort previous if a new one was requested
+			 * On slow internet connection, when you will move an open menu tree and change the hierarchy
+			 */
+			ajaxHandlers: { values: {} },
+			updateUi: function ($item) {
+				var type,
+					id = $item.find('input.menu-item-data-db-id:first').val();
+
+				if (!(
+					$item.hasClass('menu-item-edit-active') // the box is closed
+					&&
+					(type = inst.getItemType($item))
+					&&
+					!_.isEmpty(inst.options[type])
+				)) {
+					if (typeof inst.ajaxHandlers.values[id] != 'undefined') {
+						inst.ajaxHandlers.values[id].abort();
+					}
+
+					$item.find('button.fw-megamenu-stngs:first').remove();
+					return;
 				}
 
-				var id = $item.find('input.menu-item-data-db-id:first').val(),
-					$button = $('<button type="button" disabled="disabled" class="button fw-megamenu-stngs"></button>')
-						.text(localized.l10n.item_options_btn);
+				var $button = $item.find('button.fw-megamenu-stngs:first');
 
-				$item.find('.field-mega-menu-icon:first')
-					.append('<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>')
-					.append($button);
+				if (!$button.length) {
+					$button = $('<button type="button" disabled="disabled" class="button fw-megamenu-stngs"></button>');
+					$button.text(localized.l10n.item_options_btn);
 
-				$.ajax({
-					url: ajaxurl,
-					method: 'post',
-					dataType: 'json',
-					data: {
-						action: 'fw_ext_megamenu_item_values',
-						id: id
+					$item.find('.field-mega-menu-icon:first').append($button);
+				}
+
+				if (typeof inst.values[id] !== 'undefined') {
+					$button.removeAttr('disabled');
+				} else {
+					if (typeof inst.ajaxHandlers.values[id] !== 'undefined') {
+						inst.ajaxHandlers.values[id].abort();
 					}
-				}).done(function(r){
-					if (r.success) {
-						$button.removeAttr('disabled');
-						inst.values[id] = r.data.values;
-					} else {
-						$button.text('Ajax Error');
-					}
-				}).fail(function(x, y, error){
-					$button.text(String(error));
-				});
+
+					$button.attr('disabled', 'disabled');
+
+					inst.ajaxHandlers.values[id] = $.ajax({
+						url: ajaxurl,
+						method: 'post',
+						dataType: 'json',
+						data: {
+							action: 'fw_ext_megamenu_item_values',
+							id: id
+						}
+					}).done(function (r) {
+						if (r.success) {
+							$button.removeAttr('disabled');
+							inst.values[id] = r.data.values;
+						} else {
+							$button.text('Ajax Error');
+						}
+					}).fail(function (x, y, error) {
+						if ($button.length && $button.is(':visible')) { // may not exist
+							$button.text(String(error));
+						}
+					}).always(function () {
+						delete inst.ajaxHandlers.values[id];
+					});
+				}
 			}
 		};
 
-		if (!_.isEmpty(inst.options)) {
-			// Add ui elements on item box open
-			$('#update-nav-menu').on('click', '.menu-item > .menu-item-bar .item-edit', function(e){
-				_.defer(_.partial(inst.initUi, $(this).closest('.menu-item')));
-			});
+		// Add ui elements on item box open
+		$('#update-nav-menu').on('click', '.menu-item > .menu-item-bar .item-edit', function(){
+			_.defer(inst.updateUi, $(this).closest('.menu-item'));
+		});
 
-			// Prepare and open modal on button click
-			$('#update-nav-menu').on('click', '.menu-item > .menu-item-settings button.fw-megamenu-stngs', function(e){
-				var id = $(e.target).closest('.menu-item').find('input.menu-item-data-db-id:first').val();
+		// Update UI on "Use as MegaMenu" change
+		$('#update-nav-menu').on('change', '.menu-item > .menu-item-settings input.mega-menu-enabled', function () {
+			_.defer(inst.updateUi, $(this).closest('.menu-item'));
+		});
 
+		// Items moving has stopped
+		$('#update-nav-menu').on('sortstop', function (e, s) {
+			var $item = $(s.item); // fixme
+		});
+
+		// Prepare and open modal on button click
+		$('#update-nav-menu').on('click', '.menu-item > .menu-item-settings button.fw-megamenu-stngs', function(){
+			var $item = $(this).closest('.menu-item'),
+				type = inst.getItemType($item),
+				id = $item.find('input.menu-item-data-db-id:first').val();
+
+			if (!type) {
+				$(this).remove(); // button has remained visible because of a bug
+				return;
+			}
+
+			{
 				inst.eventProxy.stopListening(inst.modal);
-				inst.modal.set('values', inst.values[id]);
+
+				inst.modal.set('values', inst.values[id][type]);
+
 				inst.eventProxy.listenTo(inst.modal, 'change:values', function(){
-					inst.values[id] = inst.modal.get('values');
+					inst.values[id][type] = inst.modal.get('values');
 					inst.updateInput();
 				});
+			}
 
-				inst.modal.set('options', inst.options);
-
-				inst.modal.open();
-			});
-		}
+			inst.modal.set('options', inst.options[type]);
+			inst.modal.open();
+		});
 	})();
 });

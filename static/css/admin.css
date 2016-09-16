@@ -156,33 +156,6 @@ body .mega-menu-title-off-label {
 }
 
 
-.fw-ext-megamenu-item-options {
-	padding-right: 13px;
-	display: inline-block;
-	width: 100%;
-	box-sizing: border-box;
-}
-
-.fw-ext-megamenu-item-options > .fw-container {
-	padding: 0;
-}
-
-.fw-ext-megamenu-item-options .fw-backend-option {
-	padding: 0;
-	margin: 2px 0 5px;
-}
-
-.fw-ext-megamenu-item-options > .fw-backend-option {
-	border-bottom-width: 0;
-}
-
-.fw-ext-megamenu-item-options .fw-backend-option .fw-backend-option-label > .fw-inner {
-	padding: 0;
-}
-
-.fw-ext-megamenu-item-options .fw-backend-option .fw-backend-option-label label {
-	color: #666;
-	font-weight: normal;
-	font-size: 13px;
-	font-style: italic;
+#update-nav-menu .menu-item > .menu-item-settings .fw-megamenu-stngs {
+	margin-left: 15px;
 }
