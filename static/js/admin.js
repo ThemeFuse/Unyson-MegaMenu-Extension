@@ -217,8 +217,7 @@ jQuery(function ($) {
 			 */
 			ajaxHandlers: { values: {} },
 			updateUi: function ($item) {
-				var type,
-					id = $item.find('input.menu-item-data-db-id:first').val();
+				var type, id = $item.find('input.menu-item-data-db-id:first').val();
 
 				if (!(
 					$item.hasClass('menu-item-edit-active') // the box is closed
@@ -276,6 +275,18 @@ jQuery(function ($) {
 						delete inst.ajaxHandlers.values[id];
 					});
 				}
+			},
+			extractItemDepth: function($item){
+				return parseInt($item.attr('class').match(/ ?menu-item-depth-(\d+) ?/)[1]);
+			},
+			updateItemsTreeUi: function ($item) {
+				var itemDepth = inst.extractItemDepth($item);
+
+				// Update all sub-items (until we reach a higher level item level)
+				do {
+					_.defer(inst.updateUi, $item);
+					$item = $item.next();
+				} while ($item.length && inst.extractItemDepth($item) > itemDepth);
 			}
 		};
 
@@ -286,12 +297,12 @@ jQuery(function ($) {
 
 		// Update UI on "Use as MegaMenu" change
 		$('#update-nav-menu').on('change', '.menu-item > .menu-item-settings input.mega-menu-enabled', function () {
-			_.defer(inst.updateUi, $(this).closest('.menu-item'));
+			_.defer(inst.updateItemsTreeUi, $(this).closest('.menu-item'));
 		});
 
 		// Items moving has stopped
 		$('#update-nav-menu').on('sortstop', function (e, s) {
-			var $item = $(s.item); // fixme
+			_.defer(inst.updateItemsTreeUi, $(s.item));
 		});
 
 		// Prepare and open modal on button click
