@@ -186,13 +186,11 @@ jQuery(function ($) {
 				inst.$input.val(JSON.stringify(inst.values));
 			},
 			getItemType: function ($item) {
-				var parents = [$item],
-					$parent = $item;
+				var $parent = $item;
 
 				// find all parents
 				while (!$parent.hasClass('menu-item-depth-0')) {
 					$parent = $parent.prev();
-					parents.push($parent);
 				}
 
 				if (!$parent.find('input.mega-menu-enabled:first').is(':checked')) {
