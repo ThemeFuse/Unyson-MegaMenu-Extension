@@ -268,6 +268,14 @@ jQuery(function ($) {
 					}).fail(function (x, y, error) {
 						if ($button.length && $button.is(':visible')) { // may not exist
 							$button.text(String(error));
+
+							/**
+							 * Remove the button so on next box open the init will try again to do the ajax
+							 *
+							 * Note: Do not retry ajax because it can be
+							 *       a server problem and this will cause "DDOS" from all items
+							 */
+							setTimeout(function(){ $button.remove(); }, 3000);
 						}
 					}).always(function () {
 						delete inst.ajaxHandlers.values[id];
