@@ -42,16 +42,11 @@ class FW_Extension_Megamenu extends FW_Extension
 			return;
 		}
 
-		// Enqueue all the necessary files for Icon dialog
-		$options = array(
-			'icon' => apply_filters('fw:ext:megamenu:icon-option', array(
-				'type' => 'icon',
-				'label' => __('Select Icon', 'fw'),
-			)),
-		);
-		fw()->backend->enqueue_options_static($options);
+		// Required for icon picker modal
+		fw()->backend->option_type('icon')->enqueue_static();
 
-		wp_enqueue_media();
+		wp_enqueue_media(); // required for modal
+
 		wp_enqueue_style(
 			"fw-ext-{$this->get_name()}-admin",
 			$this->get_uri('/static/css/admin.css'),
@@ -64,6 +59,18 @@ class FW_Extension_Megamenu extends FW_Extension
 			array('fw'),
 			$this->manifest->get_version()
 		);
+
+		{
+			$items_options = array();
+
+			foreach (array('row', 'column', 'item') as $type) {
+				$items_options[$type] = $this->get_options($type);
+
+				// Enqueue assets for item options
+				fw()->backend->enqueue_options_static($items_options[$type]);
+			}
+		}
+
 		wp_localize_script(
 			"fw-ext-{$this->get_name()}-admin",
 			'_fw_ext_mega_menu',
@@ -71,27 +78,13 @@ class FW_Extension_Megamenu extends FW_Extension
 				'l10n' => array(
 					'item_options_btn' => apply_filters('fw:ext:megamenu:label:item-options-btn', __('Settings', 'fw')),
 				),
-				'icon_option' => $options['icon'],
-				'options' => array(
-					'row'    => $this->get_options('row'),
-					'column' => $this->get_options('column'),
-					'item'   => $this->get_options('item'),
-				),
+				'icon_option' => apply_filters('fw:ext:megamenu:icon-option', array(
+					'type' => 'icon',
+					'label' => __('Select Icon', 'fw'),
+				)),
+				'options' => $items_options,
 			)
 		);
-
-		/**
-		 * Enqueue assets for item options
-		 */
-		{
-			fw()->backend->enqueue_options_static(array(
-				'container' => array('type' => 'popup', 'options' => array('fake' => array('type' => 'text'))),
-			));
-
-			fw()->backend->enqueue_options_static($this->get_options('row'));
-			fw()->backend->enqueue_options_static($this->get_options('column'));
-			fw()->backend->enqueue_options_static($this->get_options('item'));
-		}
 	}
 
 	/**

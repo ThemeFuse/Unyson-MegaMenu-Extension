@@ -91,7 +91,18 @@ class FW_Db_Options_Model_MegaMenu extends FW_Db_Options_Model {
 
 	protected function get_options($item_id, array $extra_data = array())
 	{
-		return $this->ext()->get_options('item');
+		$options = array(
+			'type' => array('type' => 'text') // one of the below types
+		);
+
+		foreach (array('row', 'column', 'item') as $type) {
+			$options[$type] = array(
+				'type' => 'multi',
+				'inner-options' => $this->ext()->get_options($type),
+			);
+		}
+
+		return $options;
 	}
 
 	protected function get_values($item_id, array $extra_data = array())
