@@ -175,6 +175,7 @@ jQuery(function ($) {
 		var inst = {
 			values: {},
 			options: localized.options,
+			modal_sizes: localized.item_options_modal_sizes,
 			$input: null,
 			// Save item values in form hidden input
 			updateInput: function(){
@@ -334,6 +335,7 @@ jQuery(function ($) {
 			}
 
 			inst.modal.set('options', inst.options[type]);
+			inst.modal.set('size', inst.modal_sizes[type]);
 			inst.modal.open();
 		});
 	})();

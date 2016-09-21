@@ -61,10 +61,11 @@ class FW_Extension_Megamenu extends FW_Extension
 		);
 
 		{
-			$items_options = array();
+			$items_options = $items_options_modal_sizes = array();
 
 			foreach (array('row', 'column', 'item') as $type) {
 				$items_options[$type] = $this->get_options($type);
+				$items_options_modal_sizes[$type] = $this->get_config('item-options:popup-size:'. $type);
 
 				// Enqueue assets for item options
 				fw()->backend->enqueue_options_static($items_options[$type]);
@@ -83,6 +84,7 @@ class FW_Extension_Megamenu extends FW_Extension
 					'label' => __('Select Icon', 'fw'),
 				)),
 				'options' => $items_options,
+				'item_options_modal_sizes' => $items_options_modal_sizes,
 			)
 		);
 	}
