@@ -117,7 +117,7 @@ class FW_Extension_Megamenu extends FW_Extension
 		}
 
 		// Save item custom options
-		{
+		if ($this->get_options('row') || $this->get_options('column') || $this->get_options('item')) {
 			$item_values = fw_ext_mega_menu_get_db_item_option($menu_item_db_id);
 
 			if (isset($_POST['fw-megamenu-items-values'])) {
@@ -151,7 +151,18 @@ class FW_Extension_Megamenu extends FW_Extension
 				$item_values['type'] = '';
 			}
 
-			fw_ext_mega_menu_set_db_item_option($menu_item_db_id, null, $item_values);
+			if (
+				!$item_values['type']
+				&&
+				!FW_WP_Meta::get( 'post', $menu_item_db_id, FW_Db_Options_Model_MegaMenu::get_meta_name(), false)
+			) {
+				// Don't create an useless meta for all menu items if they are not used as MegaMenu and were never saved
+			} else {
+				fw_ext_mega_menu_set_db_item_option($menu_item_db_id, null, $item_values);
+			}
+		} elseif (FW_WP_Meta::get( 'post', $menu_item_db_id, FW_Db_Options_Model_MegaMenu::get_meta_name(), false)) {
+			// Orphan meta that needs to be deleted because there are no item options
+			delete_post_meta($menu_item_db_id, FW_Db_Options_Model_MegaMenu::get_meta_name());
 		}
 	}
 

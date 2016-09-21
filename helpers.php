@@ -122,11 +122,20 @@ class FW_Db_Options_Model_MegaMenu extends FW_Db_Options_Model {
 	 * @return string
 	 */
 	public static function get_meta_name() {
-		/**
-		 * Use basename() because it can be 'theme-name/theme-name-parent'
-		 * then after theme update it becomes 'theme-name-parent'
-		 */
-		return 'fw:ext:mm:io:'. basename(get_template());
+		try {
+			return FW_Cache::get($cache_key = 'fw:ext:megamenu:items-options:meta-name');
+		} catch (FW_Cache_Not_Found_Exception $e) {
+			FW_Cache::set(
+				$cache_key,
+				/**
+				 * Use basename() because it can be 'theme-name/theme-name-parent'
+				 * then after theme update it becomes 'theme-name-parent'
+				 */
+				$meta_name = 'fw:ext:mm:io:' . basename(get_template())
+			);
+
+			return $meta_name;
+		}
 	}
 
 	protected function get_values($item_id, array $extra_data = array())
