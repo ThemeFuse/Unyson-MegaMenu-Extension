@@ -63,7 +63,7 @@ class FW_Extension_Megamenu extends FW_Extension
 		{
 			$items_options = $items_options_modal_sizes = array();
 
-			foreach (array('row', 'column', 'item') as $type) {
+			foreach (array('row', 'column', 'item', 'default') as $type) {
 				$items_options[$type] = $this->get_options($type);
 				$items_options_modal_sizes[$type] = $this->get_config('item-options:popup-size:'. $type);
 
@@ -117,7 +117,12 @@ class FW_Extension_Megamenu extends FW_Extension
 		}
 
 		// Save item custom options
-		if ($this->get_options('row') || $this->get_options('column') || $this->get_options('item')) {
+		if (
+			$this->get_options('row') ||
+			$this->get_options('column') ||
+			$this->get_options('item') ||
+			$this->get_options('default')
+		) {
 			$item_values = fw_ext_mega_menu_get_db_item_option($menu_item_db_id);
 
 			if (isset($_POST['fw-megamenu-items-values'])) {
@@ -148,15 +153,15 @@ class FW_Extension_Megamenu extends FW_Extension
 					$item_values['type'] = 'item';
 				}
 			} else {
-				$item_values['type'] = '';
+				$item_values['type'] = 'default';
 			}
 
 			if (
-				!$item_values['type']
+				empty($decoded_values[$menu_item_db_id])
 				&&
 				!FW_WP_Meta::get( 'post', $menu_item_db_id, FW_Db_Options_Model_MegaMenu::get_meta_name(), false)
 			) {
-				// Don't create an useless meta for all menu items if they are not used as MegaMenu and were never saved
+				// Don't create an useless meta for all menu items if they were never saved
 			} else {
 				fw_ext_mega_menu_set_db_item_option($menu_item_db_id, null, $item_values);
 			}

@@ -195,7 +195,7 @@ jQuery(function ($) {
 				}
 
 				if (!$parent.find('input.mega-menu-enabled:first').is(':checked')) {
-					return false; // parent is not MegaMenu enabled
+					return 'default'; // parent is not MegaMenu enabled
 				}
 
 				if ($item.hasClass('menu-item-depth-0')) {

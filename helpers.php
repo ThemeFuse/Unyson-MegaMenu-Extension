@@ -106,7 +106,7 @@ class FW_Db_Options_Model_MegaMenu extends FW_Db_Options_Model {
 			'type' => array('type' => 'text') // one of the below types
 		);
 
-		foreach (array('row', 'column', 'item') as $type) {
+		foreach (array('row', 'column', 'item', 'default') as $type) {
 			$options[$type] = array(
 				'type' => 'multi',
 				'inner-options' => $this->ext()->get_options($type),
