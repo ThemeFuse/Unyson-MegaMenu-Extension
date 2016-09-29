@@ -110,7 +110,7 @@ class FW_Extension_Megamenu extends FW_Extension
 				),
 				'title-off' => isset($meta['title-off']),
 				'new-row' => isset($meta['new-row']),
-				'icon' => $meta['icon'],
+				'icon' => isset($meta['icon']) ? (string)$meta['icon'] : '',
 			);
 
 			fw_ext_mega_menu_update_meta($menu_item_db_id, $meta);
