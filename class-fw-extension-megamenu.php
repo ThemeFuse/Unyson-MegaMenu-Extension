@@ -42,9 +42,6 @@ class FW_Extension_Megamenu extends FW_Extension
 			return;
 		}
 
-		// Required for icon picker modal
-		fw()->backend->option_type('icon')->enqueue_static();
-
 		wp_enqueue_media(); // required for modal
 
 		wp_enqueue_style(
@@ -72,6 +69,12 @@ class FW_Extension_Megamenu extends FW_Extension
 			}
 		}
 
+		$icon_option = apply_filters('fw:ext:megamenu:icon-option', array(
+			'type' => 'icon',
+			'label' => __('Select Icon', 'fw'),
+		));
+		fw()->backend->option_type($icon_option['type'])->enqueue_static();
+
 		wp_localize_script(
 			"fw-ext-{$this->get_name()}-admin",
 			'_fw_ext_mega_menu',
@@ -79,10 +82,7 @@ class FW_Extension_Megamenu extends FW_Extension
 				'l10n' => array(
 					'item_options_btn' => apply_filters('fw:ext:megamenu:label:item-options-btn', __('Settings', 'fw')),
 				),
-				'icon_option' => apply_filters('fw:ext:megamenu:icon-option', array(
-					'type' => 'icon',
-					'label' => __('Select Icon', 'fw'),
-				)),
+				'icon_option' => $icon_option,
 				'options' => $items_options,
 				'item_options_modal_sizes' => $items_options_modal_sizes,
 			)
