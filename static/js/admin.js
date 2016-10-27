@@ -167,7 +167,7 @@ jQuery(function ($) {
 						// leave as it is
 						break;
 					case 'icon-v2':
-						icon = JSON.stringify({'type': 'icon-font', 'icon-class': icon});
+						icon = {'type': 'icon-font', 'icon-class': icon}
 						break;
 					default:
 						var eventData = {
