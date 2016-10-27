@@ -94,10 +94,32 @@ jQuery(function ($) {
 		}), eventProxy = new Backbone.Model;
 
 		// Immediately close dialog after clicking on icon
-		$(modal.frame.$el).on('change', '.fw-option-type-icon input[type="hidden"]', function () {
+		$(modal.frame.$el).on('change', 'input[name="fw_edit_options_modal[icon]"]', function(){
+			var icon = $(this).val();
+
+			switch (localized.icon_option.type) {
+				case 'icon':
+					// leave as it is
+					break;
+				case 'icon-v2':
+					icon = JSON.parse(icon)['icon-class'];
+					break;
+				default:
+					var eventData = {
+						icon: icon, // this will be changed by reference
+						icon_option: $.extend({}, localized.icon_option)
+					};
+					/** @since 1.1.2 */
+					fwEvents.trigger(
+						'fw:ext:megamenu:custom-icon-value-to-icon-class:'+ localized.icon_option.type, eventData
+					);
+					icon = eventData.icon;
+			}
+
 			modal.set('values', {
-				icon: $(this).val()
+				icon: icon
 			});
+
 			modal.frame.close();
 		});
 
@@ -137,9 +159,32 @@ jQuery(function ($) {
 			// prevent previous item event listener execution
 			eventProxy.stopListening(modal);
 
-			modal.set('values', {
-				icon: $(event.target).closest('.field-mega-menu-icon').find('input').val()
-			});
+			{
+				var icon = $(event.target).closest('.field-mega-menu-icon').find('input').val();
+
+				switch (localized.icon_option.type) {
+					case 'icon':
+						// leave as it is
+						break;
+					case 'icon-v2':
+						icon = JSON.stringify({'type': '', 'icon-class': icon});
+						break;
+					default:
+						var eventData = {
+							icon: icon, // this will be changed by reference
+							icon_option: $.extend({}, localized.icon_option)
+						};
+						/** @since 1.1.2 */
+						fwEvents.trigger(
+							'fw:ext:megamenu:icon-class-to-custom-icon-value:'+ localized.icon_option.type, eventData
+						);
+						icon = eventData.icon;
+				}
+
+				modal.set('values', {
+					icon: icon
+				});
+			}
 
 			// Listen for values change
 			eventProxy.listenTo(modal, 'change:values', function(modal, values) {
