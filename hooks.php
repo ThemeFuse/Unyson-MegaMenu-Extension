@@ -112,7 +112,14 @@ function _filter_fw_ext_mega_menu_walker_nav_menu_start_el($item_output, $item, 
 	}
 
 	// Note that raw description is stored in post_content field.
-	if ($depth > 0 && trim($item->post_content)) {
+	if (
+		$depth > 0
+		&&
+		/** @since 1.1.3 */
+		apply_filters('fw:ext:megamenu:show_start_el_item_content', true, $item)
+		&&
+		trim($item->post_content)
+	) {
 		$item_output .= '<div>' . do_shortcode($item->post_content) . '</div>';
 	}
 
