@@ -28,9 +28,7 @@ class FW_Extension_Megamenu extends FW_Extension
 		add_action('wp_update_nav_menu_item', array($this, '_admin_action_wp_update_nav_menu_item'), 10, 3);
 		add_action('admin_enqueue_scripts', array($this, '_admin_action_admin_enqueue_scripts'));
 		add_action('wp_ajax_fw_ext_megamenu_item_values', array($this, '_action_ajax_item_values'));
-
 		add_filter('wp_edit_nav_menu_walker', array($this, '_admin_filter_wp_edit_nav_menu_walker'));
-		add_filter('manage_nav-menus_columns', array($this, '_admin_filter_manage_nav_menus_columns'), 20);
 	}
 
 	/**
@@ -177,16 +175,6 @@ class FW_Extension_Megamenu extends FW_Extension
 	public function _admin_filter_wp_edit_nav_menu_walker()
 	{
 		return 'FW_Ext_Mega_Menu_Admin_Walker';
-	}
-
-	/**
-	 * @internal
-	 */
-	public function _admin_filter_manage_nav_menus_columns($columns)
-	{
-		$columns['icon'] = __('Icon', 'fw');
-
-		return $columns;
 	}
 
 	/**
