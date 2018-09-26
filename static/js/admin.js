@@ -188,6 +188,14 @@ jQuery(function ($) {
 
 			// Listen for values change
 			eventProxy.listenTo(modal, 'change:values', function(modal, values) {
+				if (
+					typeof values.icon !== 'string'
+					&&
+					localized.icon_option.type === 'icon-v2'
+				) {
+					values.icon = values.icon['icon-class']
+				}
+
 				$(event.target).closest('.field-mega-menu-icon').find('input').val(values.icon).trigger('change');
 			});
 
