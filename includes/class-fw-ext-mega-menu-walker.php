@@ -186,13 +186,15 @@ class FW_Ext_Mega_Menu_Walker extends Walker_Nav_Menu
 						'args' => $args,
 						'mega_menu_container' => isset($mega_menu_container) ? $mega_menu_container : false
 					));
+
 					$classes = array_filter($classes);
 # END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 					//start the child delimiter
 # BEGIN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 					//$cb_args = array_merge( array(&$output, $depth), $args);
 					$cb_args = array_merge( array(&$output, $depth), $args, array(
-						implode(' ', array_keys($classes))
+						implode(' ', array_keys($classes)),
+						$element
 					));
 # END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 					call_user_func_array(array($this, 'start_lvl'), $cb_args);
@@ -206,6 +208,7 @@ class FW_Ext_Mega_Menu_Walker extends Walker_Nav_Menu
 			//end the child delimiter
 			$cb_args = array_merge( array(&$output, $depth), $args);
 			$cb_args[] = implode(' ', array_keys($classes));
+			$cb_args[] = $element;
 			call_user_func_array(array($this, 'end_lvl'), $cb_args);
 		}
 
