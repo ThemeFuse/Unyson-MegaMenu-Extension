@@ -205,6 +205,7 @@ class FW_Ext_Mega_Menu_Walker extends Walker_Nav_Menu
 		if ( isset($newlevel) && $newlevel ){
 			//end the child delimiter
 			$cb_args = array_merge( array(&$output, $depth), $args);
+			$cb_args[] = implode(' ', array_keys($classes));
 			call_user_func_array(array($this, 'end_lvl'), $cb_args);
 		}
 
