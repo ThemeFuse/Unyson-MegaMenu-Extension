@@ -190,7 +190,7 @@ class FW_Db_Options_Model_MegaMenu extends FW_Db_Options_Model {
 		 * @param string|null $option_id 'type/option_id' (accepts multikey). null - all options
 		 * @param $value
 		 */
-		function fw_ext_mega_menu_set_db_item_option( $item, $option_id = null, $value ) {
+		function fw_ext_mega_menu_set_db_item_option( $item, $option_id = null, $value = '' ) {
 			return FW_Db_Options_Model::_get_instance('megamenu')->set(intval($item), $option_id, $value);
 		}
 	}
